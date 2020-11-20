@@ -1,0 +1,761 @@
+<template>
+  <div class="websocket">
+    <el-button
+      type="primary"
+      class="chatBtn"
+      @click="mydialogTableVisible = true"
+      >聊天窗口</el-button
+    >
+    <el-dialog
+      title=""
+      :visible.sync="mydialogTableVisible"
+      custom-class="custom"
+      :modal="false"
+      :show-close="false"
+    >
+      <div class="wxchatBorderLeft">
+        <el-row>
+          <div style="padding: 10px">
+            <div style="display: inline-block">
+              <el-input
+                placeholder="搜索"
+                prefix-icon="el-icon-search"
+                v-model="input2"
+                size="mini"
+              >
+              </el-input>
+            </div>
+          </div>
+        </el-row>
+
+        <el-row class="userList">
+          <div
+            v-for="(ele, index) in leftUserList"
+            :key="index"
+            @click="userClick(ele, index)"
+            class="user"
+          >
+            <el-col :span="24" ref="userActive">
+              <div style="display: inline-block; padding: 12px">
+                <!--  -->
+                <el-badge :is-dot="ele.isDot == true"
+                  ><el-avatar shape="square" :src="ele.head_pic"></el-avatar
+                ></el-badge>
+              </div>
+
+              <div style="display: inline-block" class="leftUser_input">
+                <el-col>
+                  <div class="wxchatPeople">{{ ele.nick_name }}</div>
+                </el-col>
+
+                <el-col>
+                  <div class="wxchatNews">{{ ele.content }}</div>
+                </el-col>
+              </div>
+            </el-col>
+          </div>
+        </el-row>
+      </div>
+
+      <div class="leftContent">
+        <div class="wxchatBorderRightTop">
+          <div style="float: right; padding: 5px" class="close">
+            <i class="el-icon-close" style="font-size: 10px"></i>
+          </div>
+
+          <div class="wxchatName">{{ contentChat.nick_name }}</div>
+
+          <!-- <div class="wxchatMore">
+            <i class="el-icon-more"></i>
+          </div> -->
+        </div>
+
+        <div class="wxchatBorderRightMid" ref="wxchatBorderRightMid">
+          <div v-for="(ele, index) in historyMassage" :key="index">
+            <!-- 右侧 -->
+            <div
+              style="margin-left: 30px; margin-top: 15px"
+              v-if="ele.send_id == 's_35'"
+            >
+              <div align="center" style="padding: 15px 0">
+                <el-tag type="info" size="mini">{{ ele.myadd_time }}</el-tag>
+              </div>
+
+              <el-row>
+                <el-col :span="21">
+                  <div class="chatPop2">
+                    <span style="line-height: 23px">
+                      <el-image
+                        :src="ele.content"
+                        v-if="ele.type == 1"
+                      ></el-image>
+                      <p v-else>{{ ele.content }}</p></span
+                    >
+                  </div>
+                </el-col>
+
+                <el-col :span="2">
+                  <el-avatar
+                    shape="square"
+                    :src="ele.head_pic"
+                    style="width: 35px; height: 35px"
+                  ></el-avatar>
+                </el-col>
+              </el-row>
+            </div>
+            <!-- 左侧 -->
+            <div style="margin-left: 30px; margin-top: 15px" v-else>
+              <div align="center" style="padding: 15px 0">
+                <el-tag type="info" size="mini">{{ ele.myadd_time }}</el-tag>
+              </div>
+
+              <el-row>
+                <el-col :span="2">
+                  <el-avatar
+                    shape="square"
+                    :src="ele.head_pic"
+                    style="width: 35px; height: 35px"
+                  ></el-avatar>
+                </el-col>
+
+                <el-col :span="12">
+                  <div class="chatPop1">
+                    <span style="line-height: 23px">
+                      <el-image
+                        :src="ele.content"
+                        v-if="ele.type == 1"
+                      ></el-image>
+                      <p v-else>{{ ele.content }}</p>
+                    </span>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+        </div>
+
+        <div class="wxchatBorderRightBottom">
+          <div class="wxchatIcon1">
+            <i class="el-icon-picture" @click="company"></i>
+            <input
+              type="file"
+              name="companyLogo"
+              id="file0"
+              class="displayN"
+              multiple="multiple"
+              @change="companyLogo($event)"
+              ref="fileInput"
+            />
+            <el-button type="primary" class="displayN" @click="uploading(true)">保存</el-button>
+          </div>
+
+          <!-- <el-tooltip
+            class="item"
+            effect="dark"
+            content="Top Left 提示文字"
+            placement="right-start"
+          >
+            <div style="margin: -2px 15px">
+              <el-input
+                ref="sayInput"
+                type="textarea"
+                :autosize="{ minRows: 3, maxRows: 3 }"
+                placeholder=""
+                v-model="textarea2"
+                resize="none"
+                autofocus
+                maxlength="500"
+                @keyup.enter.native="sendBtn"
+              >
+              </el-input>
+            </div>
+          </el-tooltip> -->
+
+          <div style="margin: -2px 15px">
+            <el-input
+              ref="sayInput"
+              type="textarea"
+              :autosize="{ minRows: 3, maxRows: 3 }"
+              placeholder=""
+              v-model="inputValue"
+              resize="none"
+              autofocus
+              maxlength="500"
+              @keyup.enter.native="sendBtn"
+            >
+            </el-input>
+          </div>
+
+          <div class="sendButton" @click="sendBtn">
+            <el-button size="mini">发送 (Enter)</el-button>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
+  </div>
+</template>
+ 
+<script>
+import { mapState } from "vuex";
+export default {
+  data() {
+    return {
+      imgFile: "",
+      oss_imgurl: "",
+      myCYYfile: null,
+      fileList: [],
+      ws: null,
+      count: 0,
+      userId: null, //当前用户ID
+      list: [], //聊天记录的数组
+      contentText: "", //input输入的值
+      mydialogTableVisible: "",
+      input2: "",
+      squareUrl: "",
+      textarea2: "",
+      leftUserList: [], //左侧用户
+      contentChat: {}, //右侧主聊天框
+      historyMassage: null, //历史聊天记录
+      inputValue: "",
+      leftRight: [], //根据send_id渲染我和客户的对话框
+      isDot: false, //未读消息小红点
+      isDotList: [], //小红点列表
+      webFlag: false,
+    };
+  },
+  computed: {
+    ...mapState(["client_id", "isDotNum"]),
+  },
+  created() {
+    this.isDotList = this.isDotNum;
+    this.$api.bindShop(this.client_id).then((res) => {
+      //绑定client_id到shop_id
+      console.log(res.data.info);
+      this.getLeftUserList();
+    });
+    // oss
+  },
+  mounted() {
+    // this.$initWebSocket();
+  },
+  watch: {
+    "$store.state.isDotNum": function () {
+      this.isDotList = this.$store.state.isDotNum;
+      // this.userHistory();
+      setTimeout(() => {
+        console.log(1111221111);
+        this.webFlag = true;
+        this.getLeftUserList();
+      }, 500);
+      if (this.isDotList.length == 0) {
+        this.$store.commit("overallIsDot", false);
+        console.log("已空");
+      }
+      this.webFlag = false;
+      console.log(this.isDotList);
+    },
+  },
+  methods: {
+    companyLogo(event) {
+      var file = event.target.files[0];
+      var fileSize = file.size; //文件大小
+      var filetType = file.type; //文件类型
+      //创建文件读取对象
+      if (fileSize <= 10240 * 1024) {
+        if (filetType == "image/png") {
+          this.imgFile = file;
+          this.uploading(true);
+        } else {
+          this.$message.error("图片格式不正确");
+        }
+      } else {
+        this.$message.error("图片大小不正确");
+      }
+    },
+    async uploading(flag) {
+      // console.log(document.getElementById("file0").value);
+      if (flag) {
+        var file_re = await this.readFileAsBuffer(this.imgFile);
+        console.log(this.imgFile);
+        this.$api.ossststoken().then((res) => {
+          console.log(res.data.data.date);
+          let myData = res.data.data.date;
+          let client = new window.OSS.Wrapper({
+            region: "oss-cn-hangzhou", //oss地址
+            accessKeyId: myData.Credentials.AccessKeyId, //ak
+            accessKeySecret: myData.Credentials.AccessKeySecret, //secret
+            stsToken: myData.Credentials.SecurityToken,
+            bucket: "nxhzapp", //oss名字
+          });
+          // console.log(client);
+          var imgtype = this.imgFile.type.substr(6, 4);
+          var store = `${new Date().getTime()}.${imgtype}`;
+          console.log(store);
+          client.put(store, file_re).then((res) => {
+            //这个结果就是url
+            console.log(res);
+            var a = `http://nxhzapp.oss-cn-hangzhou.aliyuncs.com/${store}`;
+            this.oss_imgurl = a;
+            console.log(a); //图片url地址
+            console.log(this.oss_imgurl);
+            if (this.oss_imgurl == "") {
+              this.$message({
+                message: "不能发送空白信息",
+                type: "warning",
+              });
+            } else {
+              let obj = {};
+              if (this.oss_imgurl != "") {
+                obj = {
+                  type: "0",
+                  content: this.oss_imgurl,
+                  user_id: this.contentChat.user_id,
+                };
+              } else {
+                obj = {
+                  type: "0",
+                  content: this.inputValue,
+                  user_id: this.contentChat.user_id,
+                };
+              }
+              this.$api
+                .userSay(obj)
+                .then((res) => {
+                  console.log(res);
+                })
+                .then(() => {
+                  this.userHistory();
+                })
+                .then(() => {
+                  this.getLeftUserList();
+                })
+                .then(() => {
+                  this.scrollBottm();
+                }).then(()=>{
+                  this.oss_imgurl = "";
+                });
+            }
+          });
+        });
+      }
+    },
+    // oss
+    company() {
+      this.$refs.fileInput.click();
+    },
+
+    //将文件转为blob类型
+    readFileAsBuffer(file) {
+      const reader = new FileReader();
+      return new Promise((resolve) => {
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+          const base64File = reader.result.replace(
+            /^data:\w+\/\w+;base64,/,
+            ""
+          );
+          resolve(new window.OSS.Buffer(base64File, "base64"));
+        };
+      });
+    },
+
+    // oss
+    userHistory() {
+      //获取消息历史记录
+      const historyObj = {
+        user_id: this.contentChat.user_id,
+        // between_time:,
+        // is_read:,//是否已读
+      };
+      this.$api
+        .userHistory(historyObj)
+        .then((res) => {
+          this.historyMassage = res.data.data;
+          this.leftRight = [];
+          this.historyMassage.forEach((ele) => {
+            ele.myadd_time = this.formatDate(new Date(ele.add_time)); //聊天时间
+            this.leftRight.push(ele.send_id);
+            var reg = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/;
+            if (reg.test(ele.content)) {
+              ele.type = 1;
+            }
+          });
+          console.log(this.historyMassage, this.leftRight);
+        })
+        .then(() => {
+          this.scrollBottm();
+        })
+        .then(() => {
+          this.scrollBottm();
+        })
+        .then(() => {
+          this.scrollBottm();
+        });
+    },
+    userClick(ele, index) {
+      // 点击左侧用户列表
+      this.webFlag = false;
+      console.log(ele, index);
+      // this.isDotList[index] = "";
+      // console.log(this.isDotList)
+      if (this.isDotList.length != 0) {
+        this.isDotList = this.isDotList.filter((num) => {
+          ele.isDot = false;
+          return num != ele.user_id;
+          // this.isDotList
+        });
+      }
+      this.$store.commit("isDotNum", this.isDotList);
+      this.contentChat = ele;
+      this.userHistory();
+      // this.getLeftUserList();
+      // setTimeout(()=>{
+      //   ele.isDot = false
+      // },1000)
+      // this.$refs.wxchatBorderRightMid.scrollTop = 0;
+      console.log(this.$refs.userActive[index].$el.classList);
+      this.$refs.userActive.forEach((item) => {
+        item.$el.classList.remove("active");
+      });
+      this.$refs.userActive[index].$el.classList.add("active");
+      // setTimeout(() => {
+      //   this.scrollBottm();
+      // }, 300);
+    },
+    async sendBtn(e) {
+      //发送聊天内容
+      // console.log(document.getElementsByClassName("el-upload-list__item-name"))
+      this.inputValue = this.$refs.sayInput.$refs.textarea.value; //输入框的内容
+      console.log(this.inputValue == "\n", e.keyCode);
+      // if (e.keyCode == 13) {
+      //   e.cancelBubble = true;
+      //   e.preventDefault();
+      //   e.stopPropagation();
+      //   this.inputValue = "";
+      // }
+      if (this.inputValue == "\n" || this.inputValue == "") {
+        this.$message({
+          message: "不能发送空白信息",
+          type: "warning",
+        });
+      } else {
+        let obj = {};
+
+        obj = {
+          type: "0",
+          content: this.inputValue,
+          user_id: this.contentChat.user_id,
+        };
+
+        await this.$api
+          .userSay(obj)
+          .then((res) => {
+            console.log(res);
+          })
+          .then(() => {
+            this.userHistory();
+          })
+          .then(() => {
+            this.getLeftUserList();
+          });
+      }
+
+      this.$refs.sayInput.$refs.textarea.value = "";
+      this.oss_imgurl = "";
+    },
+    formatDate(now) {
+      var year = now.getFullYear(); //取得4位数的年份
+      var month = now.getMonth() + 1; //取得日期中的月份，其中0表示1月，11表示12月
+      var date = now.getDate(); //返回日期月份中的天数（1到31）
+      var hour = now.getHours(); //返回日期中的小时数（0到23）
+      var minute = now.getMinutes(); //返回日期中的分钟数（0到59）
+      var second = now.getSeconds(); //返回日期中的秒数（0到59）
+      return (
+        year +
+        "-" +
+        month +
+        "-" +
+        date +
+        " " +
+        hour +
+        ":" +
+        minute +
+        ":" +
+        second
+      );
+    },
+    // var g=1551334252272; //定义一个时间戳变量
+    // var d=new Date(g);
+    getLeftUserList() {
+      // console.log(this.leftUserList)
+      // if(this.leftUserList.length!=0){
+      //   return;
+      // }
+      this.$api.userList().then((res) => {
+        //获取聊天用户列表
+        console.log(res.data.data);
+        this.leftUserList = [];
+        res.data.data.forEach((ele, index) => {
+          // console.log(ele.chat_info.content)//最后一条内容
+          this.leftUserList.push(ele.user);
+          this.leftUserList[index].content = ele.chat_info.content; //最后一条内容
+          // formatDate(new Date(ele.chat_info.add_time))
+          this.leftUserList[index].add_time = this.formatDate(
+            new Date(ele.chat_info.add_time)
+          ); //聊天时间
+        });
+        console.log(this.leftUserList);
+        this.leftUserList.forEach((item, index) => {
+          // if (item.user_id == this.isDotList) {
+          //   console.log(item.user_id, item);
+          //   item.isDot = true;
+          // }
+          if (this.isDotList.indexOf(item.user_id) != -1) {
+            console.log(item.user_id, item);
+            item.isDot = true;
+          }
+          if (item.isDot == true) {
+            this.leftUserList.unshift(this.leftUserList.splice(index, 1)[0]);
+          }
+        });
+        // this.leftUserList.forEach(item=>{
+        //   // item.un_read_number
+        // })
+      });
+    },
+
+    // 滚动条到底部
+    scrollBottm() {
+      let el = this.$refs.wxchatBorderRightMid;
+      el.scrollTop = el.scrollHeight;
+    },
+
+    // //进入页面创建websocket连接
+    // initWebSocket() {
+    //   let _this = this;
+    //   //判断页面有没有存在websocket连接
+    //   if (window.WebSocket) {
+    //     let ws = new WebSocket("ws://192.168.2.200:8282");
+    //     _this.ws = ws;
+    //     ws.onopen = func`tion () {
+    //       console.log("服务器连接成功");
+    //       _this.ws.send({ test: "12345" });
+    //     };
+    //     ws.onclose = function () {
+    //       console.log("服务器连接关闭");
+    //     };
+    //     ws.onerror = function () {
+    //       console.log("服务器连接出错");
+    //     };
+    //     ws.onmessage = function (e) {
+    //       //接收服务器返回的数据
+    //       let resData = JSON.parse(e.data);
+    //       console.log(resData);
+    //       if (resData.type == "say") {
+    //         console.log("say说");
+    //         console.log(resData.data);
+    //         console.log(Number(resData.data.send_id.slice(2)));
+    //         // this.isDotList.push(Number(resData.data.send_id.slice(2)));
+    //         _this.isDotList = Number(resData.data.send_id.slice(2));
+    //       } else if (resData.type == "init") {
+    //         _this.$api.bindShop(resData.client_id).then((res) => {
+    //           //绑定client_id到shop_id
+    //           console.log(res.data.info);
+    //         });
+    //       }
+    //       _this.getLeftUserList();
+    //     };
+    //   }
+    // },
+  },
+};
+</script>
+<style>
+.websocket .displayN{
+  display: none;
+}
+.websocket .upload-demo {
+  height: 50px;
+}
+.websocket .el-upload-list {
+  transform: translate(56px, -47px);
+  width: 210px;
+}
+.websocket .chatBtn {
+  transform: translate(54px, 106px);
+}
+.el-dialog__wrapper {
+  position: relative !important;
+}
+.el-dialog__header {
+  padding: 20px 20px 10px;
+}
+
+.chatPop1 :hover {
+  background-color: #fafafa;
+}
+
+.chatPop1 span {
+  background-color: #fff;
+  padding: 5px 8px;
+  display: inline-block;
+  border-radius: 10px;
+  margin: 0px 0 10px 10px;
+  position: relative;
+  border: 1px solid #e3e3e3;
+  max-width: 290px;
+}
+.chatPop1 span::after {
+  content: "";
+  border: 8px solid #ffffff00;
+  border-right: 8px solid #fff;
+  position: absolute;
+  top: 8px;
+  left: -16px;
+}
+.chatPop2 :hover {
+  background-color: #2683f5;
+}
+.chatPop2 span {
+  background-color: #2683f5;
+  padding: 5px 8px;
+  display: inline-block;
+  border-radius: 10px;
+  margin: 0px 15px 10px 10px;
+  position: relative;
+  border: 1px solid #e3e3e3;
+  max-width: 290px;
+  float: right;
+  color: #fff;
+}
+.chatPop2 span::after {
+  content: "";
+  border: 8px solid #ffffff00;
+  border-right: 8px solid #2683f5;
+  position: absolute;
+  top: 8px;
+  right: -16px;
+  transform: rotateY(180deg);
+}
+.custom {
+  border: 0px solid blue;
+  height: 670px;
+  width: 795px;
+}
+.wxchatBorder {
+  width: 795px;
+  height: 670px;
+  border: 1px solid red;
+  margin-left: -20px;
+  margin-top: -59.5px;
+}
+.wxchatBorderLeft {
+  width: 250px;
+  height: 670px;
+  background-color: #eeebe9;
+  border: 1px solid gray;
+  display: inline-block;
+  float: left;
+  margin-left: -20px;
+  margin-top: -60px;
+}
+.userList {
+  position: absolute;
+  top: 20px;
+  width: 249px;
+}
+.userList .user div:hover {
+  background-color: rgba(207, 209, 208, 1);
+}
+.userList .user .active {
+  background-color: rgba(201, 199, 198, 1);
+}
+.userList .user .leftUser_input {
+  width: calc(100% - 70px);
+  transform: translateY(14px);
+}
+.el-dialog__body {
+  position: relative;
+}
+.leftContent {
+  position: absolute;
+  top: -30px;
+  left: 252px;
+  width: 543px;
+}
+.wxchatPeople {
+  color: #000000;
+  font-size: 14px;
+}
+.wxchatNews {
+  color: #999;
+  padding-top: 5px;
+  font-size: 12px;
+  width: 80%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wxchatName {
+  color: #000000;
+  font-size: 20px;
+  float: left;
+  padding-left: 30px;
+  padding-top: 20px;
+}
+/* .wxchatMore {
+  color: #999;
+  font-size: 20px;
+  float: right;
+  margin-right: -15px;
+  padding-top: 25px;
+} */
+.wxchatBorderRightTop {
+  width: 545px;
+  height: 60px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e7e7e7;
+  display: block;
+  float: right;
+  margin-right: -2px;
+}
+.wxchatBorderRightTop .close .el-icon-close {
+  margin-right: 20px;
+  font-size: 20px !important;
+  margin-top: 16px;
+}
+.wxchatBorderRightMid {
+  width: 545px;
+  height: 428px;
+  background-color: #f5f5f5;
+  /* border: 2px solid deeppink; */
+  display: block;
+  margin-right: -2px;
+  overflow-y: scroll;
+}
+.wxchatBorderRightBottom {
+  width: 543px;
+  height: 180px;
+  background-color: #fff;
+  border: 1px solid #eee;
+  display: block;
+  float: right;
+  margin-right: -2px;
+}
+.wxchatIcon1 {
+  display: inline-block;
+  padding: 14px 10px 14px 30px;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+}
+.wxchatIcon1 .el-icon-picture:hover {
+  cursor: pointer;
+  text-shadow: 0px 0px 5px rgb(189, 226, 255);
+}
+.sendButton {
+  float: right;
+  margin-top: 18px;
+  margin-right: 28px;
+}
+</style>
