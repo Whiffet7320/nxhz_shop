@@ -180,8 +180,8 @@ export default {
     this.$api
       .info()
       .then((res) => {
-        console.log(res.data.data);
-        this.data = res.data.data;
+        console.log(res.data);
+        this.data = res.data;
       })
       .catch((data) => {
         console.log(data);

@@ -244,6 +244,7 @@ export default {
           page: this.pageNum,
         })
         .then((res) => {
+          console.log(res)
           this.$store.commit("goodsList", res.data.data);
           // console.log(res.data.data.data);
           console.log(this.cat1_id, this.cat2_id, this.cat3_id);

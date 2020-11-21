@@ -15,17 +15,23 @@ Vue.prototype.$api = api
 Vue.prototype.$myAxios = axios
 Vue.prototype.$bus = new Vue()
 
+// axios.interceptors.request.use(request => {
+//   request.url += '.json'
+//   return request
+// })
+
+
 //进入页面创建websocket连接
 function initWebSocket() {
   console.log(this)
   var _this;
-  if(!this){
+  if (!this) {
     _this = Vue.prototype
-  }else{
+  } else {
     _this = this;
   }
   // console.log(_this)
-  
+
   //判断页面有没有存在websocket连接
   if (window.WebSocket) {
     let ws = new WebSocket("ws://192.168.2.200:8282");
@@ -48,22 +54,22 @@ function initWebSocket() {
       let isDotNumList = [];
       if (resData.type == "say") {
         console.log("say说");
-        store.commit('overallIsDot',true)
+        store.commit('overallIsDot', true)
         isDotNumList.push(Number(resData.data.send_id.slice(2)))
-        store.commit('isDotNum',isDotNumList)
+        store.commit('isDotNum', isDotNumList)
         console.log(resData.data);
         console.log(Number(resData.data.send_id.slice(2)));
         // this.isDotList.push(Number(resData.data.send_id.slice(2)));
         _this.isDotList = Number(resData.data.send_id.slice(2));
 
       } else if (resData.type == "init") {
-        store.commit('client_id',resData.client_id)
+        store.commit('client_id', resData.client_id)
         _this.$api.bindShop(resData.client_id).then((res) => {
           //绑定client_id到shop_id
           console.log(res.data.info);
         });
       }
-      if(_this.getLeftUserList){
+      if (_this.getLeftUserList) {
         _this.getLeftUserList();
       }
     };

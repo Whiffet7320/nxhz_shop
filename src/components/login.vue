@@ -105,7 +105,7 @@ export default {
   },
   methods: {
     submitForm() {
-      this.$store.commit("passWord", this.loginForm.password);
+      sessionStorage.setItem("passWord", this.loginForm.password);
       this.$api
         .login({
           mobile: this.loginForm.username,
@@ -116,7 +116,7 @@ export default {
             // 在 sessionStorage中设置token，值为后台数据中的token
             sessionStorage.setItem("token", res.data.data.token);
             sessionStorage.setItem("isLogin", true);
-            this.$store.commit("changeUser", res.data.data);
+            // sessionStorage.setItem("user", res.data.data);
             // this.$store.commit("changeFlag", true);
             this.$router.push({ name: "test" });
             // this.$router.go(0);

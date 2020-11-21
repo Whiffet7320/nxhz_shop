@@ -16,6 +16,23 @@ const myGet = axios.create({
     baseURL: urls.baseUrl,
     method: 'get',
 })
+myPost.interceptors.response.use(response => {
+    if (response.status === 200) {
+        var myresponse = response
+    }else{
+        console.log('cuowucuowu11')
+    }
+    
+    return myresponse
+})
+myGet.interceptors.response.use(response => {
+    if (response.status === 200) {
+        var myresponse = response
+    }else{
+        console.log('cuowucuowu222')
+    }
+    return myresponse
+})
 export default {
     login(obj) {
         return myPost({

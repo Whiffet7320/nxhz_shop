@@ -73,7 +73,7 @@ export default new Vuex.Store({
     per_page(state, num) {//每页显示几条数据
       state.per_page = num;
     },
-    passWord(state, num) {//每页显示几条数据
+    passWord(state, num) {//密码
       state.passWord = num;
     },
     orderSelect(state, num) {//订单状态

@@ -151,7 +151,6 @@
   </el-form>
 </template>
 <script>
-import { mapState } from "vuex";
 export default {
   data() {
     var oldPass = (rule, value, callback) => {
@@ -162,7 +161,7 @@ export default {
         // if (this.ruleForm.oldPassword !== "") {
         //   this.$refs.ruleForm.validateField("oldPassword");
         // }
-        this.user.oldPassword = value;
+        this.myUser.oldPassword = value;
         callback();
       }
     };
@@ -182,7 +181,7 @@ export default {
       } else if (value !== this.ruleForm.pass) {
         callback(new Error("两次输入密码不一致!"));
       } else {
-        this.user.newPassword = value;
+        this.myUser.newPassword = value;
         callback();
       }
     };
@@ -191,6 +190,7 @@ export default {
       //   oldPassword:null,
       //   newPassword:null
       // },
+      myUser: {},
       loading: true,
       data: {},
       form: {
@@ -215,12 +215,11 @@ export default {
     };
   },
   components: {},
-  computed: {
-    ...mapState(["user", "passWord"]),
-  },
+  computed: {},
   created() {
+    this.passWord = sessionStorage.getItem("passWord");
+    console.log(this.passWord, this.myUser);
     // this.$initWebSocket();
-    console.log(this.passWord);
     this.$api
       .info()
       .then((res) => {
@@ -241,6 +240,11 @@ export default {
       this.$api.infoChange(obj).then((res) => {
         console.log(res);
       });
+      // .then(() => {
+      //   sessionStorage.setItem("isLogin", false);
+      //   this.$router.push({ path: "/" });
+      //   this.$router.go(0);
+      // });
     },
     onSubmit() {
       console.log("submit!");
@@ -250,17 +254,21 @@ export default {
         if (valid) {
           alert("修改成功!");
           this.centerDialogVisible = false;
-          this.$router.push({ name: "login" });
         } else {
           console.log("error submit!!");
           return false;
         }
       });
       this.changePassword({
-        new_password: this.user.newPassword,
-        old_password: this.user.oldPassword,
-        confirm_password: this.user.newPassword,
+        new_password: this.myUser.newPassword,
+        old_password: this.myUser.oldPassword,
+        confirm_password: this.myUser.newPassword,
       });
+      setTimeout(() => {
+        sessionStorage.setItem("isLogin", false);
+        this.$router.push({ path: "/" });
+        this.$router.go(0);
+      }, 500);
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
@@ -270,7 +278,7 @@ export default {
 };
 </script>
 <style>
-.el-dialog{
+.el-dialog {
   min-width: 666px;
 }
 .shop-form .el-tabs__content {
@@ -333,11 +341,10 @@ export default {
   width: 140px;
   height: 140px;
 }
-.el-dialog .el-form.demo-ruleForm{
+.el-dialog .el-form.demo-ruleForm {
   /* display: flex; */
 }
-.shop-form .el-input{
-  
+.shop-form .el-input {
 }
 .shop-form .el-input__inner {
   /* width: 60%; */

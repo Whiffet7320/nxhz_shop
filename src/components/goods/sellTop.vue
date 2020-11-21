@@ -350,7 +350,7 @@ export default {
     toGrant() {
       //新建
       // this.$store.commit("edit", { sort: "0" });
-      this.$store.commit("goodsId", null);
+      this.$store.commit("goodsId", ' ');
       this.$store.commit("nameSort", { nameF: "first", nameS: "second" });
       this.$router.push({ name: "Edit" });
     },

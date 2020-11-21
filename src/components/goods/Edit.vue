@@ -79,12 +79,8 @@
                 :placeholder="edit.is_on_sale == 1 ? '上架' : '下架'"
                 :v-model="is_on_sale == 1 ? '上架' : '下架'"
               ></el-input> -->
-              <el-radio v-model="is_on_sale" :label="1"
-                >上架</el-radio
-              >
-              <el-radio v-model="is_on_sale" :label="0"
-                >下架</el-radio
-              >
+              <el-radio v-model="is_on_sale" :label="1">上架</el-radio>
+              <el-radio v-model="is_on_sale" :label="0">下架</el-radio>
             </el-form-item>
             <!-- <el-form-item label="关联店铺 :">
               <el-select v-model="value" placeholder="请选择">
@@ -155,14 +151,10 @@
               show-overflow-tooltip
             >
               <template slot-scope="scope">
-                <el-radio
-                  v-model="scope.row.is_on_sale"
-                  :label="1"
+                <el-radio v-model="scope.row.is_on_sale" :label="1"
                   >上架</el-radio
                 >
-                <el-radio
-                  v-model="scope.row.is_on_sale"
-                  :label="0"
+                <el-radio v-model="scope.row.is_on_sale" :label="0"
                   >下架</el-radio
                 >
               </template>
@@ -200,7 +192,7 @@ export default {
   data() {
     return {
       loading: true,
-      radio:1,
+      radio: 1,
       skuList: [],
       cyy: "123",
       tableData: [
@@ -393,17 +385,86 @@ export default {
     },
     getData() {
       this.loading = true;
-      this.$api.skuList(this.goodsId).then((res) => {
-        //获取商品规格列表sku
-        console.log(res.data.data, "sku");
-        this.skuList = res.data.data;
-        console.log(this.skuList);
-        this.skuStorageArr = [];
-        this.skuList.forEach((ele) => {
-          // console.log(ele.storage)
-          this.skuStorageArr.push(ele.storage);
+      console.log(this.goodsId)
+      if (this.goodsId) {
+        this.$api.skuList(this.goodsId).then((res) => {
+          //获取商品规格列表sku
+          console.log(res);
+          console.log(res.data.data, "sku");
+          this.skuList = res.data.data;
+          console.log(this.skuList);
+          this.skuStorageArr = [];
+          this.skuList.forEach((ele) => {
+            // console.log(ele.storage)
+            this.skuStorageArr.push(ele.storage);
+          });
         });
-      });
+        this.$api.goodsInfo(this.goodsId).then((res) => {
+          console.log(res.data.data);
+          this.edit = res.data.data;
+          // this.value = this.edit.cat1
+          console.log(this.edit);
+          // this.cat1_id = this.edit.cat1_id;
+          // this.cat2_id = this.edit.cat2_id;
+          // this.cat3_id = this.edit.cat3_id;
+          const arr = [],
+            arr2 = [],
+            arr3 = [];
+          const obj = {};
+          obj.label = this.edit.cat1.cat_name;
+          obj.value = this.edit.cat1.cat_id;
+          arr.push(obj);
+          const obj2 = JSON.parse(
+            JSON.stringify(this.edit.cat2)
+              .replace(/cat_name/g, "label")
+              .replace(/cat_id/g, "value")
+          );
+          arr2.push(obj2);
+          obj.children = arr2;
+          this.myOptions = arr;
+          if (this.edit.cat2) {
+            this.value =
+              this.myOptions[0].label +
+              "/" +
+              this.myOptions[0].children[0].label;
+          } else if (this.edit.cat3) {
+            console.log(11111111);
+            const obj3 = JSON.parse(
+              JSON.stringify(this.edit.cat3)
+                .replace(/cat_name/g, "label")
+                .replace(/cat_id/g, "value")
+            );
+            obj2.children = arr3;
+            arr3.push(obj3);
+            this.value =
+              this.myOptions[0].label +
+              "/" +
+              this.myOptions[0].children[0].label +
+              "/" +
+              this.myOptions[0].children[0].children[0].label;
+          } else {
+            this.value = this.myOptions[0].label;
+          }
+          console.log(this.myOptions);
+
+          this.goods_name = this.edit.goods_name;
+          this.goods_id = this.edit.goods_id;
+          this.is_on_sale = this.edit.is_on_sale;
+          this.goods_img = this.edit.goods_img;
+          this.content = this.edit.content;
+          this.sort = this.edit.sort;
+          // this.cat1_id = this.edit.cat1_id;
+          // this.cat2_id = this.edit.cat2_id;
+          // this.cat3_id = this.edit.cat3_id;
+
+          this.goods_images = this.edit.goods_images;
+          this.loading = false;
+        });
+      } else {
+        console.log("cuowu");
+        this.$router.push({name:'sell'})
+      }
+
       this.$api.allList().then((res) => {
         console.log(res.data.data);
         this.myOptions2 = res.data.data;
@@ -415,67 +476,6 @@ export default {
         );
         this.myOptions2 = arr;
         console.log(this.myOptions2);
-      });
-      this.$api.goodsInfo(this.goodsId).then((res) => {
-        console.log(res.data.data);
-        this.edit = res.data.data;
-        // this.value = this.edit.cat1
-        console.log(this.edit);
-        // this.cat1_id = this.edit.cat1_id;
-        // this.cat2_id = this.edit.cat2_id;
-        // this.cat3_id = this.edit.cat3_id;
-        const arr = [],
-          arr2 = [],
-          arr3 = [];
-        const obj = {};
-        obj.label = this.edit.cat1.cat_name;
-        obj.value = this.edit.cat1.cat_id;
-        arr.push(obj);
-        const obj2 = JSON.parse(
-          JSON.stringify(this.edit.cat2)
-            .replace(/cat_name/g, "label")
-            .replace(/cat_id/g, "value")
-        );
-        arr2.push(obj2);
-        obj.children = arr2;
-        this.myOptions = arr;
-        if(this.edit.cat2){
-           this.value =
-            this.myOptions[0].label + "/" + this.myOptions[0].children[0].label;
-        }
-        else if (this.edit.cat3) {
-          console.log(11111111);
-          const obj3 = JSON.parse(
-            JSON.stringify(this.edit.cat3)
-              .replace(/cat_name/g, "label")
-              .replace(/cat_id/g, "value")
-          );
-          obj2.children = arr3;
-          arr3.push(obj3);
-          this.value =
-            this.myOptions[0].label +
-            "/" +
-            this.myOptions[0].children[0].label +
-            "/" +
-            this.myOptions[0].children[0].children[0].label;
-        } else {
-          this.value =
-            this.myOptions[0].label
-        }
-        console.log(this.myOptions);
-
-        this.goods_name = this.edit.goods_name;
-        this.goods_id = this.edit.goods_id;
-        this.is_on_sale = this.edit.is_on_sale;
-        this.goods_img = this.edit.goods_img;
-        this.content = this.edit.content;
-        this.sort = this.edit.sort;
-        // this.cat1_id = this.edit.cat1_id;
-        // this.cat2_id = this.edit.cat2_id;
-        // this.cat3_id = this.edit.cat3_id;
-
-        this.goods_images = this.edit.goods_images;
-        this.loading = false
       });
     },
     // 保存按钮
@@ -500,9 +500,12 @@ export default {
       console.log(myObj);
       this.$api.goodsEdit(myObj).then((res) => {
         console.log(res.data);
+      })
+      .then(()=>{
+        this.$router.push({ name: "sell" });
       });
       // this.getData()
-      this.$router.push({ name: "sell" });
+      
     },
     handleChange(value) {
       console.log(value);
