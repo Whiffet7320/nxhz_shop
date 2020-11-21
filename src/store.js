@@ -27,6 +27,8 @@ export default new Vuex.Store({
     client_id: null,//绑定client_id到shop_id
     overallIsDot: false,//全局的isDot
     isDotNum: '',//websocket中的isDot
+    startTime:null,//根据时间筛选（订单页） 开始
+    endTime:null,//结束时间
   },
   mutations: {
     changeModal(state, boolean) {
@@ -91,6 +93,12 @@ export default new Vuex.Store({
     },
     isDotNum(state, num) {//websocket中的isDot
       state.isDotNum = num;
+    },
+    startTime(state, num) {//根据时间筛选（订单页）开始
+      state.startTime = num;
+    },
+    endTime(state, num) {//根据时间筛选（订单页）结束
+      state.endTime = num;
     },
   },
   actions: {

@@ -1,8 +1,18 @@
 <template>
   <div class="testBottom">
     <el-table :data="orderList" style="width: 100%">
-      <el-table-column prop="order_sn" label="订单号"> </el-table-column>
-      <el-table-column prop="user" label="用户信息">
+      <el-table-column
+        prop="order_sn"
+        label="订单号"
+        :show-overflow-tooltip="true"
+      >
+      </el-table-column>
+      <el-table-column
+        prop="user"
+        label="用户信息"
+        width="250"
+        :show-overflow-tooltip="true"
+      >
         <template slot-scope="scope">
           <div class="user" v-html="scope.row.user"></div>
         </template>
@@ -140,7 +150,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["search", "pageNum", "orderSelect"]),
+    ...mapState(["search", "pageNum", "orderSelect", "endTime", "startTime"]),
   },
   methods: {
     getValue(value) {
@@ -225,7 +235,15 @@ export default {
         this.shipping = res.data.data;
         console.log(this.shipping);
       });
-      this.$api.orderList().then((res) => {
+      const orderListObj = {
+        begin_time: this.startTime,
+        end_time: this.endTime,
+        keyword: this.search,
+      };
+      console.log(orderListObj);
+      this.$api.orderList({
+        keyword:"123"
+      }).then((res) => {
         // console.log(res.data.data);
         this.orderList = res.data.data;
         this.$store.commit("goodsList", res.data.data);
@@ -261,15 +279,15 @@ export default {
               // console.log(item)
               var orderGoods = `${item.goods_name}${item.goods_sku_name}  ${item.buy_number}件`;
               // console.log(orderGoods);
-              ele.orderGoods = orderGoods;//商品信息
+              ele.orderGoods = orderGoods; //商品信息
             });
           });
         });
-        this.orderList = res.data.data.filter(
-          (data) =>
-            !this.mySearch ||
-            data.order_sn.toLowerCase().includes(this.mySearch.toLowerCase())
-        );
+        // this.orderList = res.data.data.filter(
+        //   (data) =>
+        //     !this.mySearch ||
+        //     data.order_sn.toLowerCase().includes(this.mySearch.toLowerCase())
+        // );
         this.$store.commit("total", this.orderList.length);
         this.orderList = this.orderList.splice((this.myPageNum - 1) * 9, 9);
         this.orderList = this.orderList.filter((ele) => {
@@ -304,6 +322,10 @@ export default {
     },
     "$store.state.orderSelect": function () {
       this.myOrderSelect = this.$store.state.orderSelect;
+      this.getData();
+    },
+    "$store.state.endTime": function () {
+      // this.myOrderSelect = this.$store.state.orderSelect;
       this.getData();
     },
   },

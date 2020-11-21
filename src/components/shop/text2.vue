@@ -1,5 +1,11 @@
 <template>
-  <el-form ref="form" :model="form" label-width="80px" class="shop-form">
+  <el-form
+    ref="form"
+    :model="form"
+    label-width="80px"
+    class="shop-form"
+    v-loading="loading"
+  >
     <div class="shop-formtwo">
       <div class="btn-title">
         <span class="shop-title">商铺信息</span>
@@ -156,7 +162,7 @@ export default {
         // if (this.ruleForm.oldPassword !== "") {
         //   this.$refs.ruleForm.validateField("oldPassword");
         // }
-        this.user.oldPassword = value
+        this.user.oldPassword = value;
         callback();
       }
     };
@@ -176,7 +182,7 @@ export default {
       } else if (value !== this.ruleForm.pass) {
         callback(new Error("两次输入密码不一致!"));
       } else {
-        this.user.newPassword = value
+        this.user.newPassword = value;
         callback();
       }
     };
@@ -185,6 +191,7 @@ export default {
       //   oldPassword:null,
       //   newPassword:null
       // },
+      loading: true,
       data: {},
       form: {
         name: "",
@@ -209,7 +216,7 @@ export default {
   },
   components: {},
   computed: {
-    ...mapState(["user","passWord"]),
+    ...mapState(["user", "passWord"]),
   },
   created() {
     // this.$initWebSocket();
@@ -222,17 +229,18 @@ export default {
       })
       .catch((data) => {
         console.log(data);
+      })
+      .then(() => {
+        this.loading = false;
       });
   },
   methods: {
     changePassword(obj) {
       //修改密码
       this.centerDialogVisible = true;
-      this.$api
-        .infoChange(obj)
-        .then((res) => {
-          console.log(res);
-        });
+      this.$api.infoChange(obj).then((res) => {
+        console.log(res);
+      });
     },
     onSubmit() {
       console.log("submit!");
@@ -242,17 +250,17 @@ export default {
         if (valid) {
           alert("修改成功!");
           this.centerDialogVisible = false;
-          this.$router.push({name:'login'})
+          this.$router.push({ name: "login" });
         } else {
           console.log("error submit!!");
           return false;
         }
       });
       this.changePassword({
-          new_password: this.user.newPassword,
-          old_password: this.user.oldPassword,
-          confirm_password: this.user.newPassword,
-        })
+        new_password: this.user.newPassword,
+        old_password: this.user.oldPassword,
+        confirm_password: this.user.newPassword,
+      });
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
@@ -262,11 +270,14 @@ export default {
 };
 </script>
 <style>
-.el-tabs__content {
+.el-dialog{
+  min-width: 666px;
+}
+.shop-form .el-tabs__content {
   /* width: 100%;
   height: 100%; */
 }
-.shop-formtwo {
+.shop-form .shop-formtwo {
   /* height: 100%; */
   /* width: 600px; */
   /* position: absolute;
@@ -284,7 +295,7 @@ export default {
 .shop-formtwo .el-form-item__label {
   width: 120px !important;
 }
-.btn-title {
+.shop-form .btn-title {
   display: flex;
   position: relative;
   /* margin-left: -50px; */
@@ -293,13 +304,13 @@ export default {
   width: 560px;
   align-items: center;
 }
-.shop-title {
+.shop-form .shop-title {
   /* position: absolute;
   top: 50%; */
   /* transform: translateY(-50%); */
   font-size: 40px;
 }
-.myBtn {
+.shop-form .myBtn {
   /* height: 30px;
   line-height: 6px; */
   position: absolute;
@@ -318,27 +329,33 @@ export default {
 .shop-form {
   /* padding-bottom: 100px; */
 }
-.el-image {
+.shop-form .el-image {
   width: 140px;
   height: 140px;
 }
-.el-input__inner {
+.el-dialog .el-form.demo-ruleForm{
+  /* display: flex; */
+}
+.shop-form .el-input{
+  
+}
+.shop-form .el-input__inner {
   /* width: 60%; */
 }
-.demo-ruleForm {
+.shop-form .demo-ruleForm {
   position: relative;
   left: 50%;
   transform: translateX(-50%);
 }
-.demo-ruleForm .el-form-item.is-required {
+.shop-form .demo-ruleForm .el-form-item.is-required {
   /* transform: translateX(6%); */
 }
-.el-form-item.modal-footerBtn {
+.shop-form .el-form-item.modal-footerBtn {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
 }
-.el-form-item.modal-footerBtn .el-form-item__content {
+.shop-form .el-form-item.modal-footerBtn .el-form-item__content {
   /* display: flex !important;
   justify-content: space-between;
   margin-left: 0px !important; */
@@ -349,15 +366,15 @@ export default {
   position: absolute;
   right: 10%;
 } */
-.el-dialog.el-dialog--center .el-form-item__content{
+.shop-form .el-dialog.el-dialog--center .el-form-item__content {
   display: flex;
   justify-content: center;
-    position: absolute;
+  position: absolute;
   left: 50%;
   transform: translateX(-50%);
   margin-left: 0 !important;
 }
-.shop-form .el-dialog{
+.shop-form .el-dialog {
   height: 340px !important;
 }
 </style>

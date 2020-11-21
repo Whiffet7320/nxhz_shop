@@ -130,7 +130,33 @@
 
         <div class="wxchatBorderRightBottom">
           <div class="wxchatIcon1">
-            <i class="el-icon-picture" @click="company"></i>
+            <el-popover placement="top" width="218" v-model="visible">
+              <p>请选择上传方式：</p>
+              <div style="text-align: left; margin-top: 10px">
+                <el-button size="mini" type="primary" @click="company"
+                  >本地上传</el-button
+                >
+                <el-button type="primary" size="mini" @click="popInps"
+                  >输入网络资源地址</el-button
+                >
+                <el-input
+                  style="margin-top: 10px; width: 160px"
+                  v-model="oppinput"
+                  placeholder="请输入资源地址"
+                  v-if="popInp"
+                ></el-input>
+                <el-button
+                  style="margin-top: 22px; float: right"
+                  size="mini"
+                  type="test"
+                  @click="Inpcompany"
+                  v-if="popInp"
+                  >上传</el-button
+                >
+              </div>
+              <i class="el-icon-picture" slot="reference" @click="popInps2"></i>
+            </el-popover>
+            <!-- <i class="el-icon-picture" @click="company"></i> -->
             <input
               type="file"
               name="companyLogo"
@@ -144,30 +170,6 @@
               >保存</el-button
             >
           </div>
-
-
-          
-          <!-- <el-tooltip
-            class="item"
-            effect="dark"
-            content="Top Left 提示文字"
-            placement="right-start"
-          >
-            <div style="margin: -2px 15px">
-              <el-input
-                ref="sayInput"
-                type="textarea"
-                :autosize="{ minRows: 3, maxRows: 3 }"
-                placeholder=""
-                v-model="textarea2"
-                resize="none"
-                autofocus
-                maxlength="500"
-                @keyup.enter.native="sendBtn"
-              >
-              </el-input>
-            </div>
-          </el-tooltip> -->
 
           <div style="margin: -2px 15px">
             <el-input
@@ -198,6 +200,10 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
+      inputValueImg: "", //上传链接地址的input
+      oppinput: "",
+      popInp: false,
+      visible: false,
       imgFile: "",
       oss_imgurl: "",
       myCYYfile: null,
@@ -253,6 +259,16 @@ export default {
     },
   },
   methods: {
+    Inpcompany() {
+      console.log(this.oppinput);
+      this.sendBtn();
+    },
+    popInps2() {
+      this.popInp = false;
+    },
+    popInps() {
+      this.popInp = !this.popInp;
+    },
     companyLogo(event) {
       var file = event.target.files[0];
       var fileSize = file.size; //文件大小
@@ -321,13 +337,10 @@ export default {
                   console.log(res);
                 })
                 .then(() => {
-                  this.userHistory();
-                })
-                .then(() => {
                   this.getLeftUserList();
                 })
                 .then(() => {
-                  this.scrollBottm();
+                  this.userHistory();
                 })
                 .then(() => {
                   this.oss_imgurl = "";
@@ -340,6 +353,7 @@ export default {
     // oss
     company() {
       this.$refs.fileInput.click();
+      this.visible = false;
     },
 
     //将文件转为blob类型
@@ -381,13 +395,9 @@ export default {
           console.log(this.historyMassage, this.leftRight);
         })
         .then(() => {
-          this.scrollBottm();
-        })
-        .then(() => {
-          this.scrollBottm();
-        })
-        .then(() => {
-          this.scrollBottm();
+          setTimeout(() => {
+            this.scrollBottm();
+          }, 200);
         });
     },
     userClick(ele, index) {
@@ -420,41 +430,67 @@ export default {
       //   this.scrollBottm();
       // }, 300);
     },
-    async sendBtn(e) {
+    async sendBtn() {
       //发送聊天内容
       // console.log(document.getElementsByClassName("el-upload-list__item-name"))
-      this.inputValue = this.$refs.sayInput.$refs.textarea.value; //输入框的内容
-      console.log(this.inputValue == "\n", e.keyCode);
+      if (this.oppinput != "") {
+        // this.inputValue = this.oppinput
+        console.log(this.oppinput);
+      } else {
+        this.inputValue = this.$refs.sayInput.$refs.textarea.value; //输入框的内容
+      }
+      console.log(this.inputValue == "\n");
       // if (e.keyCode == 13) {
       //   e.cancelBubble = true;
       //   e.preventDefault();
       //   e.stopPropagation();
       //   this.inputValue = "";
       // }
-      if (this.inputValue == "\n" || this.inputValue == "") {
-        this.$message({
-          message: "不能发送空白信息",
-          type: "warning",
-        });
-      } else {
-        let obj = {};
+      let obj = {};
+      if (this.oppinput == "") {
+        if (this.inputValue == "\n" || this.inputValue == "") {
+          this.$message({
+            message: "不能发送空白信息",
+            type: "warning",
+          });
+        } else {
+          obj = {
+            type: "0",
+            content: this.inputValue,
+            user_id: this.contentChat.user_id,
+          };
 
+          await this.$api
+            .userSay(obj)
+            .then((res) => {
+              console.log(res);
+            })
+            .then(() => {
+              this.getLeftUserList();
+            })
+            .then(() => {
+              this.userHistory();
+            });
+        }
+      } else {
         obj = {
           type: "0",
-          content: this.inputValue,
+          content: this.oppinput,
           user_id: this.contentChat.user_id,
         };
-
         await this.$api
           .userSay(obj)
           .then((res) => {
             console.log(res);
           })
           .then(() => {
+            this.getLeftUserList();
+          })
+          .then(() => {
             this.userHistory();
           })
           .then(() => {
-            this.getLeftUserList();
+            this.oppinput = "";
           });
       }
 
@@ -569,6 +605,9 @@ export default {
 };
 </script>
 <style>
+.websocket .el-popover button {
+  margin-top: 20px !important;
+}
 .websocket .displayN {
   display: none;
 }

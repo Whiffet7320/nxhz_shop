@@ -79,7 +79,7 @@
           <p class="tit">快递单号：</p>
         </div>
         <div class="below-two">
-          <p class="tit">{{myOrder.order_express}}</p>
+          <p class="tit">{{ myOrder.order_express }}</p>
           <!-- myOrder.order_express 可能会null -->
           <!-- <p class="tit">{{myOrder.order_express.express_number}}</p> -->
         </div>
@@ -191,18 +191,41 @@ export default {
     this.$api.orderInfo(this.details.order_id).then((res) => {
       console.log(res.data.data);
       this.myOrder = res.data.data;
+      this.myOrder.add_time = this.formatDate(new Date(res.data.data.add_time))
+
       if (this.myOrder.user_pay_type == 0) {
         this.myOrder.myUserPayType = "未知";
       } else if (this.myOrder.user_pay_type == 1) {
         this.myOrder.myUserPayType = "支付宝";
-      }else if (this.myOrder.user_pay_type == 2) {
+      } else if (this.myOrder.user_pay_type == 2) {
         this.myOrder.myUserPayType = "微信";
-      }else if (this.myOrder.user_pay_type == 3) {
+      } else if (this.myOrder.user_pay_type == 3) {
         this.myOrder.myUserPayType = "余额";
       }
     });
   },
   methods: {
+    formatDate(now) {
+      var year = now.getFullYear(); //取得4位数的年份
+      var month = now.getMonth() + 1; //取得日期中的月份，其中0表示1月，11表示12月
+      var date = now.getDate(); //返回日期月份中的天数（1到31）
+      var hour = now.getHours(); //返回日期中的小时数（0到23）
+      var minute = now.getMinutes(); //返回日期中的分钟数（0到59）
+      var second = now.getSeconds(); //返回日期中的秒数（0到59）
+      return (
+        year +
+        "-" +
+        month +
+        "-" +
+        date +
+        " " +
+        hour +
+        ":" +
+        minute +
+        ":" +
+        second
+      );
+    },
     backTo() {
       this.$router.push({ name: "order" });
     },

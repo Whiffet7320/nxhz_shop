@@ -1,5 +1,5 @@
 <template>
-  <el-form ref="form" :model="form" label-width="80px" class="shop-form" v-loading="loading">
+  <el-form ref="form" :model="form" label-width="80px" class="shop-form">
     <div class="edit-formtwo">
       <div class="title">
         <p>订单详情页</p>

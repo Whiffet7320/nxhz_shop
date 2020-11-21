@@ -1,5 +1,5 @@
 <template>
-  <div class="testBottom" >
+  <div class="testBottom">
     <el-table :data="myTableData" style="width: 100%" ref="multipleTable">
       <el-table-column type="expand">
         <template slot-scope="props">
@@ -8,6 +8,7 @@
               <span>{{ props.row.cat_id }}</span>
             </el-form-item> -->
             <el-table
+              ref="skuMultipleTable"
               :data="props.row.sku"
               style="width: 100%"
               :show-header="false"
@@ -48,7 +49,12 @@
                 </template>
               </el-table-column>
 
-              <el-table-column type="selection" width="200"> </el-table-column>
+              <el-table-column width="200" label="是否上架">
+                <template slot-scope="scope">
+                  <!-- <input type="text" v-model="scope.row.checkedFather" /> -->
+                  <el-checkbox v-model="scope.row.checkedFather"></el-checkbox>
+                </template>
+              </el-table-column>
               <el-table-column fixed="right" label="操作" width="150">
                 <template slot-scope="scope">
                   <el-button
@@ -57,6 +63,13 @@
                     size="small"
                     >编辑</el-button
                   >
+                  <el-button
+                    @click="deleteRowEdit(scope)"
+                    type="text"
+                    size="small"
+                  >
+                    删除
+                  </el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -78,7 +91,12 @@
       <el-table-column prop="catName" label="分类"> </el-table-column>
       <el-table-column prop="address3" label="销售价"> </el-table-column>
       <el-table-column prop="address3" label="库存"> </el-table-column>
-      <el-table-column type="selection" width="200"> </el-table-column>
+      <el-table-column width="200" label="是否上架">
+        <template slot-scope="scope">
+          <!-- <input type="text" v-model="scope.row.checkedFather" /> -->
+          <el-checkbox v-model="scope.row.checkedFather"></el-checkbox>
+        </template>
+      </el-table-column>
       <el-table-column fixed="right" label="操作" width="150">
         <template slot-scope="scope">
           <el-button @click="handleClick(scope.row)" type="text" size="small"
@@ -98,6 +116,7 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
+      checkedFather: null, //外部的复选框
       loading: true,
       myTableData: null,
       myPageNum: 1,
@@ -146,6 +165,28 @@ export default {
     //     }
     //   }, 200);
     // },
+    deleteRowEdit(scope) {
+      // 下拉sku的删除按钮
+      console.log(scope.row);
+      const skuObj = {
+        sku_id: scope.row.sku_id,
+        status: 0, //0删除
+      };
+      this.$api
+        .skuChange(skuObj)
+        .then((res) => {
+          console.log(res);
+        })
+        .then(() => {
+          this.$message({
+            message: "删除成功",
+            type: "success",
+          });
+        })
+        .then(() => {
+          this.getData();
+        });
+    },
     deleteRow(row) {
       //删除
       console.log(row.goods_id);
@@ -242,7 +283,9 @@ export default {
           console.log(this.myTableData);
           this.myTableData.forEach((ele) => {
             // console.log(ele)
-            if (!ele.cat2) {
+            if (!ele.cat1) {
+              ele.catName = "";
+            } else if (!ele.cat2) {
               console.log(`${ele.cat1.cat_name}`);
               ele.catName = `${ele.cat1.cat_name}`;
             } else if (!ele.cat3) {
@@ -252,7 +295,21 @@ export default {
             }
           });
           this.tableData.forEach((ele) => {
-            // this.$set(ele.sku, "index", index);
+            if (ele.is_on_sale == 1) {
+              // console.log(ele);
+              ele.checkedFather = true;
+            } else {
+              ele.checkedFather = false;
+            }
+            console.log(ele.sku);
+            ele.sku.forEach((item) => {
+              if (item.is_on_sale == 1) {
+                // console.log(item);
+                item.checkedFather = true;
+              } else {
+                item.checkedFather = false;
+              }
+            });
             this.sku.push(ele.sku);
             // console.log(this.sku[index].index);
             // this.tableData2 = ele.sku;
@@ -260,85 +317,70 @@ export default {
           });
         });
     },
-    select() {
-      this.myTableData.forEach((ele, index) => {
-        // console.log(ele.is_on_sale, index);
-        if (ele.is_on_sale === 1) {
-          this.$refs.multipleTable.toggleRowSelection(this.myTableData[index]);
-        }
-      });
-    },
+    // select() {
+    //   this.myTableData.forEach((ele) => {
+    //     console.log(ele.sku);
+    //   });
+    // },
   },
   created() {
+    this.checkedFather = true;
     console.log(this.search);
     this.mySearch = this.$store.state.search;
-    // setInterval(()=>{
-    //   console.log(this.search)
-    // },1000)
     this.getData();
   },
   watch: {
-    "this.myTableData": function () {
-      this.getData();
-      setTimeout(() => {
-        this.select();
-      }, 300);
-    },
+    // "this.myTableData": function () {
+    //   this.getData();
+    //   // this.select();
+    // },
     "$store.state.search": {
       handler: function () {
         this.mySearch = this.$store.state.search;
         this.getData();
-        setTimeout(() => {
-          this.select();
-        }, 300);
+        // this.select();
       },
     },
     "$store.state.pageNum": function () {
       // console.log(this.$store.state.pageNum)
       this.myPageNum = this.$store.state.pageNum;
       this.getData();
-      setTimeout(() => {
-        this.select();
-      }, 300);
+      // this.select();
     },
     "$store.state.per_page": function () {
       // console.log(this.$store.state.pageNum)
       // this.myPageNum = this.$store.state.per_page;
       this.getData();
-      setTimeout(() => {
-        this.select();
-      }, 300);
+      // this.select();
     },
     "$store.state.selectValue": function () {
       this.mySelectValue = this.$store.state.selectValue;
       this.getData();
-      setTimeout(() => {
-        this.select();
-      }, 300);
+      // setTimeout(() => {
+      //   this.select();
+      // }, 300);
     },
   },
   mounted() {
-    setTimeout(() => {
-      this.select();
-      // console.log(that.tableData[2].sku[1],that.tableData[2])
-      // console.log(that.$refs.multipleTable.toggleRowSelection(that.tableData[2].sku[1]))
-      // that.sku.forEach((ele) => {
-      //   // console.log(that.sku[index]);
-      //   // console.log(that.$refs.multipleTable.toggleRowSelection(that.tableData[index]),index)
-      //   // console.log(that.$refs.multipleTable.toggleRowSelection(that.sku[index]))
-      //   // that.$refs.multipleTable.toggleRowSelection(that.tableData[1]);
-      //   ele.forEach((item)=>{
-      //     // console.log(item.is_on_sale,index)
-      //     if(item.is_on_sale === 1){
-      //       // console.log(ele[index])
-      //       // console.log(that.sku[0][0])
-      //       // that.$refs.multipleTable.toggleRowSelection(ele[index]);
-      //       // that.$refs.multipleTable.toggleRowSelection(that.sku[0][0]);
-      //       // that.$refs.multipleTable.toggleRowSelection(that.tableData[1]);
-      //     }
-      //   })
-      // });
-    }, 300);
+    // this.select();
+    // console.log(that.tableData[2].sku[1],that.tableData[2])
+    // console.log(that.$refs.multipleTable.toggleRowSelection(that.tableData[2].sku[1]))
+    // that.sku.forEach((ele) => {
+    //   // console.log(that.sku[index]);
+    //   // console.log(that.$refs.multipleTable.toggleRowSelection(that.tableData[index]),index)
+    //   // console.log(that.$refs.multipleTable.toggleRowSelection(that.sku[index]))
+    //   // that.$refs.multipleTable.toggleRowSelection(that.tableData[1]);
+    //   ele.forEach((item)=>{
+    //     // console.log(item.is_on_sale,index)
+    //     if(item.is_on_sale === 1){
+    //       // console.log(ele[index])
+    //       // console.log(that.sku[0][0])
+    //       // that.$refs.multipleTable.toggleRowSelection(ele[index]);
+    //       // that.$refs.multipleTable.toggleRowSelection(that.sku[0][0]);
+    //       // that.$refs.multipleTable.toggleRowSelection(that.tableData[1]);
+    //     }
+    //   })
+    // });
     // setTimeout(() => {
     //   console.log(
     //     that2.$refs.multipleTable.toggleRowSelection(that2.tableData[2])
