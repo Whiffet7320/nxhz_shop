@@ -19,16 +19,16 @@ const myGet = axios.create({
 myPost.interceptors.response.use(response => {
     if (response.status === 200) {
         var myresponse = response
-    }else{
+    } else {
         console.log('cuowucuowu11')
     }
-    
+
     return myresponse
 })
 myGet.interceptors.response.use(response => {
     if (response.status === 200) {
         var myresponse = response
-    }else{
+    } else {
         console.log('cuowucuowu222')
     }
     return myresponse
@@ -73,9 +73,12 @@ export default {
             },
         })
     },
-    orderList() {
+    orderList(obj) {
         return myGet({
             url: urls.orderList,
+            params: {
+                ...obj
+            },
             headers: {
                 'token': sessionStorage.getItem("token")
             },
@@ -237,7 +240,16 @@ export default {
     ossststoken() {
         return myGet({//oss上传获取ststoken
             url: urls.ossststoken,
+            headers: {
+                'token': sessionStorage.getItem("token")
+            },
+        })
+    },
+    imageList(goods_id) {//获取商品相册列表
+        return myGet({//oss上传获取ststoken
+            url: urls.ossststoken,
             params: {
+                goods_id
             },
             headers: {
                 'token': sessionStorage.getItem("token")

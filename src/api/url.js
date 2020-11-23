@@ -20,4 +20,5 @@ export default {
     skuChange:'/shop/goods/sku/change',//修改规格属性 上下架&删除&修改库存
     skuEdit:'/shop/goods/sku/edit',//添加规格 添加&编辑
     ossststoken:'/shop/oss/ststoken',//oss上传获取ststoken
+    imageList:'/goods/image/list',//获取商品相册列表
 }

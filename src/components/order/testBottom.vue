@@ -232,8 +232,8 @@ export default {
       // console.log(this.orderSelect);
       this.$api.shipping().then((res) => {
         // console.log(res.data.data)
-        this.shipping = res.data.data;
-        console.log(this.shipping);
+        this.shipping = res.data.data; //快递名称
+        // console.log(this.shipping);
       });
       const orderListObj = {
         begin_time: this.startTime,
@@ -241,9 +241,7 @@ export default {
         keyword: this.search,
       };
       console.log(orderListObj);
-      this.$api.orderList({
-        keyword:"123"
-      }).then((res) => {
+      this.$api.orderList(orderListObj).then((res) => {
         // console.log(res.data.data);
         this.orderList = res.data.data;
         this.$store.commit("goodsList", res.data.data);
@@ -283,13 +281,7 @@ export default {
             });
           });
         });
-        // this.orderList = res.data.data.filter(
-        //   (data) =>
-        //     !this.mySearch ||
-        //     data.order_sn.toLowerCase().includes(this.mySearch.toLowerCase())
-        // );
         this.$store.commit("total", this.orderList.length);
-        this.orderList = this.orderList.splice((this.myPageNum - 1) * 9, 9);
         this.orderList = this.orderList.filter((ele) => {
           if (this.myOrderSelect == "") {
             return true;
@@ -311,6 +303,7 @@ export default {
   watch: {
     "$store.state.search": function () {
       this.mySearch = this.$store.state.search;
+      // console.log('xiugaile')
       this.getData();
     },
     "$store.state.pageNum": function () {
@@ -326,6 +319,12 @@ export default {
     },
     "$store.state.endTime": function () {
       // this.myOrderSelect = this.$store.state.orderSelect;
+      // console.log('xiugaile')
+      this.getData();
+    },
+    "$store.state.startTime": function () {
+      // this.myOrderSelect = this.$store.state.orderSelect;
+      // console.log('xiugaile')
       this.getData();
     },
   },

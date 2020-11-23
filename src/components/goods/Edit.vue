@@ -22,19 +22,28 @@
               ></el-input>
             </el-form-item>
             <el-form-item label="商品主图 :" class="myImg">
-              <el-image :src="edit.goods_img" v-model="goods_img"> </el-image>
+              <el-image :src="goods_img" v-model="goods_img"> </el-image>
+              <div class="button companyButton">
+                <el-button type="primary" @click="company" icon="el-icon-share"
+                  >更换主图</el-button
+                >
+              </div>
 
-              <el-upload
-                action="https://jsonplaceholder.typicode.com/posts/"
-                list-type="picture-card"
-                :on-preview="handlePictureCardPreview"
-                :on-remove="handleRemove"
+              <input
+                type="file"
+                name="companyLogo"
+                id="file0"
+                class="displayN"
+                multiple="multiple"
+                @change="companyLogo($event, 'str')"
+                ref="fileInput"
+              />
+              <el-button
+                type="primary"
+                class="displayN"
+                @click="uploading(true)"
+                >保存</el-button
               >
-                <i class="el-icon-plus"></i>
-              </el-upload>
-              <el-dialog :visible.sync="dialogVisible">
-                <img width="100%" :src="dialogImageUrl" alt="" />
-              </el-dialog>
               <!--  -->
             </el-form-item>
             <el-form-item label="商品轮播图 :">
@@ -42,9 +51,33 @@
                 v-for="(ele, index) in edit.goods_images"
                 :key="index"
                 :src="ele.image_path"
-                v-model="goods_img"
+                v-model="goods_images"
               >
               </el-image>
+              <div class="button companyButton">
+                <el-button
+                  type="primary"
+                  @click="companyList"
+                  icon="el-icon-share"
+                  >更换轮播图</el-button
+                >
+              </div>
+
+              <input
+                type="file"
+                name="companyLogo"
+                id="file0"
+                class="displayN"
+                multiple="multiple"
+                @change="companyLogo($event, 'arr')"
+                ref="fileInputList"
+              />
+              <el-button
+                type="primary"
+                class="displayN"
+                @click="uploading(true)"
+                >保存</el-button
+              >
             </el-form-item>
             <el-form-item label="分类:" prop="region" class="region">
               <div class="block">
@@ -82,17 +115,6 @@
               <el-radio v-model="is_on_sale" :label="1">上架</el-radio>
               <el-radio v-model="is_on_sale" :label="0">下架</el-radio>
             </el-form-item>
-            <!-- <el-form-item label="关联店铺 :">
-              <el-select v-model="value" placeholder="请选择">
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
-                </el-option>
-              </el-select>
-            </el-form-item> -->
             <el-button type="primary" @click="preservation">保存</el-button>
           </div>
         </el-tab-pane>
@@ -134,10 +156,35 @@
             </el-table-column>
             <el-table-column prop="address" label="SKU图">
               <template slot-scope="scope">
-                <el-image
+                <!-- <el-image
                   style="width: 60px; height: 60px"
                   :src="scope.row.goods_img"
-                ></el-image>
+                ></el-image> -->
+                <el-image
+                  v-if="scope.row.goods_img"
+                  style="width: 60px; height: 60px; cursor: pointer"
+                  :src="scope.row.goods_img"
+                  v-model="skuGoods_img"
+                  @click="skuCompany(scope)"
+                >
+                </el-image>
+                <div class="button skucompanyButton" v-else>
+                  <el-button
+                    type="primary"
+                    @click="skuCompany(scope)"
+                    icon="el-icon-picture"
+                  ></el-button>
+                </div>
+
+                <input
+                  type="file"
+                  name="companyLogo"
+                  id="file0"
+                  class="fileName displayN"
+                  multiple="multiple"
+                  @change="companyLogo($event, 'sku', scope.$index)"
+                  ref="skufileInput"
+                />
               </template>
             </el-table-column>
             <el-table-column prop="address" label="销售单位" width="200">
@@ -182,6 +229,9 @@
           ></el-button>
           <!-- <el-button type="primary" class="addBtn" @click="addRow(skuList)">新增</el-button> -->
         </el-tab-pane>
+        <el-tab-pane label="商品相册" name="third">角色管理
+
+        </el-tab-pane>
       </el-tabs>
     </div>
   </el-form>
@@ -191,44 +241,14 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
+      skuGoods_img: "",
+      imgFile: "",
+      oss_imgurl: "",
       loading: true,
       radio: 1,
       skuList: [],
       cyy: "123",
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1518 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1517 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1519 弄",
-          zip: 200333,
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1516 弄",
-          zip: 200333,
-        },
-      ],
+      tableData: [],
       //
       dialogImageUrl: "",
       dialogVisible: false, //商品主图
@@ -241,6 +261,7 @@ export default {
       goods_id: "",
       is_on_sale: 1,
       goods_img: "",
+      goods_img2: "",
       content: "",
       cat1_id: "",
       cat2_id: "",
@@ -293,6 +314,107 @@ export default {
     this.getData();
   },
   methods: {
+    // 图片上传
+    company() {
+      this.$refs.fileInput.click();
+    },
+    // 轮播图上传
+    companyList() {
+      this.$refs.fileInputList.click();
+    },
+    // sku图片上传
+    skuCompany(scope) {
+      // console.log(scope.$index);
+      // this.$refs.skufileInput.click();
+      // console.log(`skufileInput${scope.$index}`);
+      // console.log(this.$refs)
+      console.log(document.getElementsByClassName("fileName")[scope.$index]);
+      var skufileInput = document.getElementsByClassName("fileName")[
+        scope.$index
+      ];
+      skufileInput.click();
+      // console.log(eval('this.$refs.`skufileInput${scope.$index}`'))
+      // var st = `skufileInput${scope.$index}`
+      // console.log(this.$refs.`skufileInput${scope.$index}`)
+      // console.log(this.$refs.skufileInput`${scope.$index}`)
+      // this.$refs.skufileInput`${scope.$index}`.click()
+    },
+    companyLogo(event, type, scope) {
+      var file = event.target.files[0];
+      var fileSize = file.size; //文件大小
+      var filetType = file.type; //文件类型
+      // console.log(event)
+      //创建文件读取对象
+      if (fileSize <= 10240 * 1024) {
+        if (filetType == "image/png") {
+          this.imgFile = file;
+          this.uploading(true, type, scope);
+        } else {
+          this.$message.error("图片格式不正确");
+        }
+      } else {
+        this.$message.error("图片大小不正确");
+      }
+    },
+    //将文件转为blob类型
+    readFileAsBuffer(file) {
+      const reader = new FileReader();
+      return new Promise((resolve) => {
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+          const base64File = reader.result.replace(
+            /^data:\w+\/\w+;base64,/,
+            ""
+          );
+          resolve(new window.OSS.Buffer(base64File, "base64"));
+        };
+      });
+    },
+    async uploading(flag, type, scope) {
+      // console.log(document.getElementById("file0").value);
+      if (flag) {
+        var file_re = await this.readFileAsBuffer(this.imgFile);
+        console.log(this.imgFile);
+        this.$api.ossststoken().then((res) => {
+          console.log(res.data.data.date);
+          let myData = res.data.data.date;
+          let client = new window.OSS.Wrapper({
+            region: "oss-cn-hangzhou", //oss地址
+            accessKeyId: myData.Credentials.AccessKeyId, //ak
+            accessKeySecret: myData.Credentials.AccessKeySecret, //secret
+            stsToken: myData.Credentials.SecurityToken,
+            bucket: "nxhzapp", //oss名字
+          });
+          // console.log(client);
+          var imgtype = this.imgFile.type.substr(6, 4);
+          var store = `images/${new Date().getTime()}.${imgtype}`;
+          console.log(store);
+          client.put(store, file_re).then((res) => {
+            //这个结果就是url
+            console.log(res);
+            var a = `http://nxhzapp.oss-cn-hangzhou.aliyuncs.com/${store}`;
+            if (type == "str") {
+              this.goods_img = a;
+              console.log(a);
+            } else if (type == "arr") {
+              let goods_imagesObj = {};
+              let goods_imagesArr = [];
+              goods_imagesObj.image_path = a;
+              goods_imagesArr.push(goods_imagesObj);
+              this.goods_images.push(goods_imagesArr);
+              console.log(this.goods_images);
+            } else if (type == "sku") {
+              console.log(scope);
+              // this.skuGoods_img = a;
+              // this.skuList[scope].goods_img = a
+              this.$set(this.skuList[scope], "goods_img", a);
+              console.log(a);
+            }
+          });
+        });
+      }
+    },
+
     // 操作
     addRow(tableData) {
       tableData.push({});
@@ -342,12 +464,13 @@ export default {
           // prime_cost:,
           // market_price:,
           shop_price: scope.row.shop_price,
-          // goods_img:,
+          goods_img: scope.row.goods_img,
           // weight:,
           storage: myNewStorage,
           unit: scope.row.unit,
           is_on_sale: scope.row.is_on_sale,
         };
+        console.log(skuNewObj2);
         this.$api.skuEdit(skuNewObj2).then((res) => {
           console.log(res);
         });
@@ -361,7 +484,7 @@ export default {
           // prime_cost:,
           // market_price:,
           shop_price: scope.row.shop_price,
-          // goods_img:,
+          goods_img: scope.row.goods_img,
           // weight:,
           storage: scope.row.storage,
           unit: scope.row.unit,
@@ -376,17 +499,13 @@ export default {
         type: "success",
       });
     },
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
-    },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
-    },
     getData() {
       this.loading = true;
-      console.log(this.goodsId)
+      console.log(this.goodsId);
       if (this.goodsId) {
+        this.$api.imageList(this.goodsId).then((res)=>{
+          console.log(res.data.data)
+        })
         this.$api.skuList(this.goodsId).then((res) => {
           //获取商品规格列表sku
           console.log(res);
@@ -395,6 +514,7 @@ export default {
           console.log(this.skuList);
           this.skuStorageArr = [];
           this.skuList.forEach((ele) => {
+            // ele.goods_img =
             // console.log(ele.storage)
             this.skuStorageArr.push(ele.storage);
           });
@@ -453,6 +573,7 @@ export default {
           this.goods_img = this.edit.goods_img;
           this.content = this.edit.content;
           this.sort = this.edit.sort;
+          // this.skuGoods_img = this.edit
           // this.cat1_id = this.edit.cat1_id;
           // this.cat2_id = this.edit.cat2_id;
           // this.cat3_id = this.edit.cat3_id;
@@ -462,7 +583,7 @@ export default {
         });
       } else {
         console.log("cuowu");
-        this.$router.push({name:'sell'})
+        this.$router.push({ name: "sell" });
       }
 
       this.$api.allList().then((res) => {
@@ -498,14 +619,15 @@ export default {
         goods_images: this.goods_images,
       };
       console.log(myObj);
-      this.$api.goodsEdit(myObj).then((res) => {
-        console.log(res.data);
-      })
-      .then(()=>{
-        this.$router.push({ name: "sell" });
-      });
+      this.$api
+        .goodsEdit(myObj)
+        .then((res) => {
+          console.log(res.data);
+        })
+        .then(() => {
+          this.$router.push({ name: "sell" });
+        });
       // this.getData()
-      
     },
     handleChange(value) {
       console.log(value);
@@ -544,6 +666,17 @@ export default {
 };
 </script>
 <style>
+.shop-form .displayN {
+  display: none;
+}
+.shop-form .companyButton {
+  height: 100px !important;
+  margin-left: 20px;
+}
+.shop-form .skucompanyButton {
+  height: 100px !important;
+  transform: translate(0, 30px);
+}
 .inputDetails .el-form-item__content {
   width: 1000px;
 }
@@ -710,6 +843,6 @@ export default {
   height: 100%;
 } */
 .el-tabs__nav-wrap.is-top {
-  width: 152px;
+  width: 248px;
 }
 </style>

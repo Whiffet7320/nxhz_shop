@@ -302,7 +302,7 @@ export default {
           });
           // console.log(client);
           var imgtype = this.imgFile.type.substr(6, 4);
-          var store = `${new Date().getTime()}.${imgtype}`;
+          var store = `images/${new Date().getTime()}.${imgtype}`;
           console.log(store);
           client.put(store, file_re).then((res) => {
             //这个结果就是url

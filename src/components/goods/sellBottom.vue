@@ -242,6 +242,7 @@ export default {
           cat2_id: this.selectValue[1],
           cat3_id: this.selectValue[2],
           page: this.pageNum,
+          // verify_state:,
         })
         .then((res) => {
           console.log(res)
@@ -252,7 +253,7 @@ export default {
           console.log(this.total);
           // this.per_page = res.data.data.per_page;
           // this.limit = res.data.data.data.length;
-          console.log(res.data.data.data.length, this.per_page);
+          // console.log(res.data.data.data.length, this.per_page);
           // this.$store.commit("per_page", this.per_page);
           this.$store.commit("total", this.total);
           this.tableData = res.data.data.data;

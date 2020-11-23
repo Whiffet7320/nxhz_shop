@@ -22,7 +22,7 @@
             <el-option label="交易关闭" value="交易关闭"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="活动时间" required class="time">
+        <el-form-item label="下单时间"  class="time">
           <el-col :span="12">
             <el-form-item prop="date1">
               <el-date-picker
@@ -47,6 +47,7 @@
             </el-form-item>
           </el-col>
         </el-form-item>
+        
 
         <el-form-item class="contentTop-btn">
           <el-button type="primary" @click="onSubmit" class="search"
@@ -65,23 +66,6 @@
             v-model="phoneInput"
             placeholder="用户手机号/订单号"
           ></el-input>
-        </div>
-        <div class="time">
-          <div class="block">
-            <span class="spanLeft">默认</span>
-            <el-date-picker v-model="value1" type="date" placeholder="选择日期">
-            </el-date-picker>
-          </div>
-          <div class="block">
-            <span>-</span>
-            <el-date-picker
-              v-model="value2"
-              align="right"
-              type="date"
-              placeholder="选择日期"
-            >
-            </el-date-picker>
-          </div>
         </div>
       </div>
     </div>
@@ -133,15 +117,15 @@ export default {
     timeChange() {
       console.log(this.ruleForm.date1, this.ruleForm.date2);
       console.log(
-        Date.parse(this.ruleForm.date1) / 1000,
+        Date.parse(this.ruleForm.date1) ,
         "__",
-        Date.parse(this.ruleForm.date2) / 1000
+        Date.parse(this.ruleForm.date2) 
       );
       this.startTime = this.formatDate(
-        new Date(Date.parse(this.ruleForm.date1) / 1000)
+        new Date(Date.parse(this.ruleForm.date1) )
       );
       this.endTime = this.formatDate(
-        new Date(Date.parse(this.ruleForm.date2) / 1000)
+        new Date(Date.parse(this.ruleForm.date2) )
       );
     },
     onSubmit() {
@@ -156,6 +140,8 @@ export default {
       this.phoneInput = "";
       this.value1 = "";
       this.value2 = "";
+      this.endTime = "";
+      this.startTime = "";
       this.onSubmit();
     },
   },
