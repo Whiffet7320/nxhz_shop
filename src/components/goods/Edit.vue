@@ -46,7 +46,7 @@
               >
               <!--  -->
             </el-form-item>
-            <el-form-item label="商品轮播图 :">
+            <!-- <el-form-item label="商品轮播图 :">
               <el-image
                 v-for="(ele, index) in edit.goods_images"
                 :key="index"
@@ -78,7 +78,7 @@
                 @click="uploading(true)"
                 >保存</el-button
               >
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="分类:" prop="region" class="region">
               <div class="block">
                 <el-cascader
@@ -229,8 +229,31 @@
           ></el-button>
           <!-- <el-button type="primary" class="addBtn" @click="addRow(skuList)">新增</el-button> -->
         </el-tab-pane>
-        <el-tab-pane label="商品相册" name="third">角色管理
+        <el-tab-pane label="商品相册" name="third">
+          <div class="blockImage">
+            <div class="block" v-for="(item, index) in imgList" :key="index">
+              <el-image :src="item.image_path"></el-image>
+              <i class="el-icon-circle-close" @click="deleImage(item)"></i>
+            </div>
+            <el-button
+              v-if="imgList.length < 5"
+              type="primary"
+              @click="companyList"
+              class="imageCBtn"
+              icon="el-icon-circle-plus-outline"
+              circle
+            ></el-button>
 
+            <input
+              type="file"
+              name="companyLogo"
+              id="file0"
+              class="displayN"
+              multiple="multiple"
+              @change="companyLogo($event, 'arr')"
+              ref="fileInputList"
+            />
+          </div>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -241,6 +264,8 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
+      imgList: [], //商品相册
+      img_id: null,
       skuGoods_img: "",
       imgFile: "",
       oss_imgurl: "",
@@ -314,6 +339,25 @@ export default {
     this.getData();
   },
   methods: {
+    // 删除图片
+    deleImage(item) {
+      console.log(item);
+      this.$api
+        .imageChange({
+          goods_id: this.goods_id,
+          img_id: item.img_id,
+        })
+        .then((res) => {
+          console.log(res, "删除图片");
+        })
+        .then(() => {
+          this.$api.imageList(this.goodsId).then((res) => {
+            console.log(res.data.data, "imgList");
+            this.imgList = res.data.data;
+            this.img_id = this.imgList.img_id;
+          });
+        });
+    },
     // 图片上传
     company() {
       this.$refs.fileInput.click();
@@ -397,12 +441,23 @@ export default {
               this.goods_img = a;
               console.log(a);
             } else if (type == "arr") {
-              let goods_imagesObj = {};
-              let goods_imagesArr = [];
-              goods_imagesObj.image_path = a;
-              goods_imagesArr.push(goods_imagesObj);
-              this.goods_images.push(goods_imagesArr);
-              console.log(this.goods_images);
+              const imageChangeObj = {
+                goods_id: this.goods_id,
+                img_id: this.img_id,
+                image_path: a,
+              };
+              this.$api
+                .imageChange(imageChangeObj)
+                .then((res) => {
+                  console.log(res, "image添加");
+                })
+                .then(() => {
+                  this.$api.imageList(this.goodsId).then((res) => {
+                    console.log(res.data.data, "imgList");
+                    this.imgList = res.data.data;
+                    this.img_id = this.imgList.img_id;
+                  });
+                });
             } else if (type == "sku") {
               console.log(scope);
               // this.skuGoods_img = a;
@@ -503,9 +558,11 @@ export default {
       this.loading = true;
       console.log(this.goodsId);
       if (this.goodsId) {
-        this.$api.imageList(this.goodsId).then((res)=>{
-          console.log(res.data.data)
-        })
+        this.$api.imageList(this.goodsId).then((res) => {
+          console.log(res.data.data, "imgList");
+          this.imgList = res.data.data;
+          this.img_id = this.imgList.img_id;
+        });
         this.$api.skuList(this.goodsId).then((res) => {
           //获取商品规格列表sku
           console.log(res);
@@ -639,7 +696,8 @@ export default {
       this.edit.cat3_id = this.cat3_id;
     },
     backTo() {
-      this.$router.push({ name: "sell" });
+      // this.$router.push({ name: "sell" });
+      this.$router.go(-1);
     },
     handleClick(tab, event) {
       console.log(tab, event);
@@ -669,6 +727,38 @@ export default {
 .shop-form .displayN {
   display: none;
 }
+.shop-form .imageCBtn {
+  position: relative;
+  height: 40px;
+  width: 40px;
+  margin-left: 20px;
+  /* transform: translateY(-20px); */
+}
+.shop-form .blockImage {
+  display: flex;
+}
+.blockImage .block {
+  position: relative;
+}
+.blockImage .el-icon-circle-close {
+  position: absolute;
+  z-index: 99;
+  top: 5px;
+  right: 5px;
+  font-size: 20px;
+  cursor: pointer;
+  color: #fff;
+  /* background-color: rgb(245, 245, 245); */
+}
+.blockImage .el-icon-circle-close:hover {
+  color: rgb(250, 81, 81);
+}
+.imageCBtn .el-icon-circle-plus-outline {
+  font-size: 48px;
+  position: absolute;
+  top: -5px;
+  left: -5px;
+}
 .shop-form .companyButton {
   height: 100px !important;
   margin-left: 20px;
@@ -697,7 +787,7 @@ export default {
   width: 32px;
   position: relative;
 }
-.el-icon-circle-plus-outline {
+.addBtn .el-icon-circle-plus-outline {
   font-size: 40px;
   position: absolute;
   top: -4px;

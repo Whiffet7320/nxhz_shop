@@ -24,6 +24,7 @@ Vue.prototype.$bus = new Vue()
 //进入页面创建websocket连接
 function initWebSocket() {
   console.log(this)
+  let isDotNumList = [];
   var _this;
   if (!this) {
     _this = Vue.prototype
@@ -51,12 +52,12 @@ function initWebSocket() {
       //接收服务器返回的数据
       let resData = JSON.parse(e.data);
       console.log(resData);
-      let isDotNumList = [];
       if (resData.type == "say") {
         console.log("say说");
         store.commit('overallIsDot', true)
         isDotNumList.push(Number(resData.data.send_id.slice(2)))
         store.commit('isDotNum', isDotNumList)
+        console.log(isDotNumList)
         console.log(resData.data);
         console.log(Number(resData.data.send_id.slice(2)));
         // this.isDotList.push(Number(resData.data.send_id.slice(2)));

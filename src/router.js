@@ -49,9 +49,10 @@ const routes = [
         redirect: 'order/testContent',
         component: () => import('./components/order/index.vue'),
         meta:[
-            {title:'订单列表',url:'/order/testContent'},
-            {title:'订单',url:'/order/details'},
-            {title:'评论列表',url:'/order/commentList'}
+            {title:'订单管理',url:'/order/testContent',flag:true},
+            {title:'订单列表',url:'/order/testContent',flag:true},
+            // {title:'订单',url:'/order/details',flag:true},
+            // {title:'评论列表',url:'/order/commentList',flag:true}
         ],
         children: [
             {
@@ -92,12 +93,12 @@ const routes = [
     {
         path: '/operate',
         name: 'operate',
-        redirect: '/operate/testContent2',
+        redirect: '/operate/operatetest',
         component: () => import('./components/operate/test.vue'),
         children: [
             {
-                path: 'testContent2',
-                name: 'testContent2',
+                path: 'operatetest',
+                name: 'operatetest',
                 component: () => import('./components/operate/testContent.vue')
             },
             {

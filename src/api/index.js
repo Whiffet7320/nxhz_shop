@@ -247,9 +247,20 @@ export default {
     },
     imageList(goods_id) {//获取商品相册列表
         return myGet({//oss上传获取ststoken
-            url: urls.ossststoken,
+            url: urls.imageList,
             params: {
                 goods_id
+            },
+            headers: {
+                'token': sessionStorage.getItem("token")
+            },
+        })
+    },
+    imageChange(obj){//添加 删除图片
+        return myPost({
+            url: urls.imageChange,
+            params: {
+                ...obj
             },
             headers: {
                 'token': sessionStorage.getItem("token")

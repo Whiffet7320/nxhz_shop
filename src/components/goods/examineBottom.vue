@@ -32,7 +32,7 @@
 
               <el-table-column label="库存" prop="storage"> </el-table-column>
 
-              <el-table-column prop="address3" label="审核状态">
+              <el-table-column prop="verify_state" label="审核状态">
               </el-table-column>
               <el-table-column fixed="right" label="操作" width="200">
               </el-table-column>
@@ -54,13 +54,18 @@
       </el-table-column>
       <el-table-column prop="address3" label="销售价"> </el-table-column>
       <el-table-column prop="address3" label="库存"> </el-table-column>
-      <el-table-column prop="address3" label="审核状态"> </el-table-column>
+      <el-table-column prop="myVerify" label="审核状态"> </el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button @click="handleClick(scope.row)" type="text" size="small"
+          <el-button @click="Editagain(scope.row)" type="text" size="small"
             >重新编辑</el-button
           >
-          <el-button @click="deleteRow(scope.row)" type="text" size="small">
+          <el-button
+            v-if="scope.row.verify_state == 1"
+            @click="seeWhy(scope.row)"
+            type="text"
+            size="small"
+          >
             查看理由
           </el-button>
         </template>
@@ -105,18 +110,34 @@ export default {
           this.tableData.forEach((ele) => {
             // this.$set(ele.sku, "index", index);
             this.sku.push(ele.sku);
+            if (ele.verify_state == 0) {
+              ele.myVerify = "待审核";
+            } else if (ele.verify_state == 1) {
+              ele.myVerify = "审核未通过";
+            } else if (ele.verify_state == 2) {
+              ele.myVerify = "审核通过";
+            }
             // console.log(this.sku[index].index);
             // this.tableData2 = ele.sku;
           });
           console.log(this.tableData);
         });
     },
-    handleClick(row) {
+    Editagain(row) {
+      //重新编辑
       console.log(row);
       this.$store.commit("edit", row);
+      this.$store.commit("goodsId", row.goods_id);
+      this.$store.commit("nameSort", { nameF: "first", nameS: "second" });
       this.$router.push({ name: "Edit" });
     },
-
+    seeWhy(row) {
+      //查看理由
+      console.log(row);
+      this.$alert("你们的商品没有到总部获得确认。", "拒绝理由", {
+        confirmButtonText: "确定",
+      });
+    },
     toEdit() {
       this.$router.push({ name: "Edit" });
     },

@@ -241,7 +241,7 @@ export default {
           cat1_id: this.selectValue[0],
           cat2_id: this.selectValue[1],
           cat3_id: this.selectValue[2],
-          page: this.pageNum,
+          page: this.myPageNum,
           // verify_state:,
         })
         .then((res) => {
@@ -346,6 +346,7 @@ export default {
     "$store.state.pageNum": function () {
       // console.log(this.$store.state.pageNum)
       this.myPageNum = this.$store.state.pageNum;
+      console.log(this.myPageNum)
       this.getData();
       // this.select();
     },

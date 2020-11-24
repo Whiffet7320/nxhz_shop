@@ -93,94 +93,8 @@ export default {
   data() {
     return {
       myOrder: {},
-      twoarr: [
-        {
-          a: "待支付",
-          b: "330022000000",
-          c: "330300000330",
-          d: "支付宝",
-          e: "顺丰食品",
-          f: "2020/10/20 09:00:00",
-          g: "2020/10/20 09:00:00",
-          h: "100.00",
-          i: "20.00",
-          m: "60.00",
-        },
-      ],
-      arr: [
-        {
-          t1: "黄色",
-          t2: "100.00",
-          t3: "3",
-          t4: "斤",
-        },
-        {
-          t1: "绿色",
-          t2: "888.00",
-          t3: "31",
-          t4: "吨",
-        },
-        {
-          t1: "绿色",
-          t2: "888.00",
-          t3: "31",
-          t4: "吨",
-        },
-        {
-          t1: "绿色",
-          t2: "888.00",
-          t3: "31",
-          t4: "吨",
-        },
-        {
-          t1: "绿色",
-          t2: "888.00",
-          t3: "31",
-          t4: "吨",
-        },
-        {
-          t1: "绿色",
-          t2: "888.00",
-          t3: "31",
-          t4: "吨",
-        },
-        {
-          t1: "绿色",
-          t2: "888.00",
-          t3: "31",
-          t4: "吨",
-        },
-        {
-          t1: "绿色",
-          t2: "888.00",
-          t3: "31",
-          t4: "吨",
-        },
-        {
-          t1: "绿色",
-          t2: "888.00",
-          t3: "31",
-          t4: "吨",
-        },
-        {
-          t1: "绿色",
-          t2: "888.00",
-          t3: "31",
-          t4: "吨",
-        },
-        {
-          t1: "绿色",
-          t2: "888.00",
-          t3: "31",
-          t4: "吨",
-        },
-        {
-          t1: "绿色",
-          t2: "888.00",
-          t3: "31",
-          t4: "吨",
-        },
-      ],
+      twoarr: [],
+      arr: [],
     };
   },
   computed: {
@@ -191,7 +105,7 @@ export default {
     this.$api.orderInfo(this.details.order_id).then((res) => {
       console.log(res.data.data);
       this.myOrder = res.data.data;
-      this.myOrder.add_time = this.formatDate(new Date(res.data.data.add_time))
+      this.myOrder.add_time = this.formatDate(new Date(res.data.data.add_time));
 
       if (this.myOrder.user_pay_type == 0) {
         this.myOrder.myUserPayType = "未知";

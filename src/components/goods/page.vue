@@ -8,6 +8,7 @@
         layout="total, prev, pager, next, jumper,sizes"
         :total="this.myTotal"
         :page-sizes="[10, 15, 20, 30]"
+        ref="page"
       >
       </el-pagination>
     </div>
@@ -21,7 +22,7 @@ export default {
     return {
       myGoodsList: null,
       newGoodsList: null,
-      myTotal:null
+      myTotal: null,
     };
   },
   methods: {
@@ -39,10 +40,10 @@ export default {
       // this.$store.commit('goodsList',this.myGoodsList)
       // console.log([1,2,3,4,5,6,7,8,9,10,11,12].splice(val-1,3))
     },
-    getTotal(){
-      this.myTotal = this.total
-      console.log(this.myTotal)
-    }
+    getTotal() {
+      this.myTotal = this.total;
+      console.log(this.myTotal);
+    },
   },
   computed: {
     ...mapState(["goodsList", "total"]),
@@ -50,13 +51,18 @@ export default {
   created() {
     // console.log(this.goodsList)
     this.myGoodsList = this.goodsList.data;
-    this.getTotal()
+    this.getTotal();
   },
-  watch:{
-    "$store.state.total":function(){
-      this.getTotal()
-    }
-  }
+  watch: {
+    "$store.state.total": function () {
+      this.getTotal();
+    },
+    "$store.state.pageNum": function () {
+      if (this.$store.state.pageNum == 1) {
+        this.$refs.page.$children[2].$el.children[0].click();
+      }
+    },
+  },
 };
 </script>
 <style>

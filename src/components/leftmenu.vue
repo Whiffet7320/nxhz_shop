@@ -35,10 +35,10 @@
               <i class="el-icon-s-order"></i>
               <span>订单管理</span>
             </template>
-            <router-link :to="{ name: 'testContent' }" tag="el-menu-item"
+            <router-link :to="{ name: 'testContent' ,params:{id:'testContent'}}" tag="el-menu-item"
               >订单列表</router-link
             >
-            <router-link :to="{ name: 'commentList' }" tag="el-menu-item"
+            <router-link :to="{ name: 'commentList',params:{id:'commentList'} }" tag="el-menu-item"
               >评论列表</router-link
             >
           </el-submenu>
@@ -47,7 +47,7 @@
               <i class="el-icon-s-promotion"></i>
               <span>运营管理</span>
             </template>
-            <router-link :to="{ name: 'testContent2' }" tag="el-menu-item"
+            <router-link :to="{ name: 'operatetest' }" tag="el-menu-item"
               >优惠券列表</router-link
             >
             <router-link :to="{ name: 'record' }" tag="el-menu-item"

@@ -247,14 +247,13 @@ export default {
       // this.userHistory();
       setTimeout(() => {
         console.log(1111221111);
-        this.webFlag = true;
         this.getLeftUserList();
       }, 500);
+      console.log(this.isDotList.length)
       if (this.isDotList.length == 0) {
         this.$store.commit("overallIsDot", false);
         console.log("已空");
       }
-      this.webFlag = false;
       console.log(this.isDotList);
     },
   },
@@ -405,14 +404,15 @@ export default {
       this.webFlag = false;
       console.log(ele, index);
       // this.isDotList[index] = "";
-      // console.log(this.isDotList)
+      console.log(this.isDotList)
       if (this.isDotList.length != 0) {
+        // ******点击左侧用户列表后小红点消失且不重新跳到下面******
         this.isDotList = this.isDotList.filter((num) => {
           ele.isDot = false;
           return num != ele.user_id;
-          // this.isDotList
         });
       }
+      console.log(this.isDotList)
       this.$store.commit("isDotNum", this.isDotList);
       this.contentChat = ele;
       this.userHistory();
