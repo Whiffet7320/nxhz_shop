@@ -7,6 +7,12 @@ import api from './api/index'
 import store from './store'
 import axios from 'axios'
 import { getLodop } from "@/assets/js/LodopFuncs";
+import Viewer from 'v-viewer'
+import 'viewerjs/dist/viewer.css'
+Vue.use(Viewer)
+Viewer.setDefaults({
+  Options: { 'inline': true, 'button': true, 'navbar': true, 'title': true, 'toolbar': true, 'tooltip': true, 'movable': true, 'zoomable': true, 'rotatable': true, 'scalable': true, 'transition': true, 'fullscreen': true, 'keyboard': true, 'url': 'data-source' }
+})
 // import LodopFuncs from '@/assets/js/LodopFuncs'
 // import VueNativeSock from 'vue-native-websocket'
 // Vue.use(LodopFuncs)
@@ -120,26 +126,6 @@ function initWebSocket() {
         LODOP.PRINT();
       }
       if (resData.type == "say") {
-        let LODOP = getLodop();
-        LODOP.SET_PRINT_STYLE("FontSize", 18);
-        LODOP.SET_PRINT_STYLE("Bold", 1);
-        const array = [{
-          goods_name: '德芙丝滑巧克力',
-          buy_number: 1,
-          shop_price: 4516,
-        }, {
-          goods_name: '费列罗巧克力',
-          buy_number: 45646,
-          shop_price: 4516,
-        }
-        ]
-        const body = array.map(i => {
-          return '<span>' + i.goods_name + '</span><span>*' + i.buy_number + '</span><span style="margin-left: 60px">' + i.shop_price + '</span><br/>  ' +
-            ''
-        }).join('')
-        LODOP.ADD_PRINT_HTM(0, 0, 350, 500,
-          body);
-        LODOP.PRINT();
         console.log("say说");
         store.commit('overallIsDot', true)
         isDotNumList.push(Number(resData.data.send_id.slice(2)))

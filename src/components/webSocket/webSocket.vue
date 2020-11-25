@@ -79,11 +79,16 @@
                 <el-col :span="21">
                   <div class="chatPop2">
                     <span style="line-height: 23px">
-                      <el-image
-                        :src="ele.content"
-                        v-if="ele.type == 1"
-                      ></el-image>
-                      <p v-else>{{ ele.content }}</p></span
+                      <viewer>
+                        <img
+                          :src="ele.content"
+                          class="img_cyy"
+                          v-if="ele.type == 1"
+                          @click="imgClick"
+                        >
+                        <p v-else>{{ ele.content }}</p>
+                      </viewer>
+                      </span
                     >
                   </div>
                 </el-col>
@@ -115,12 +120,15 @@
                 <el-col :span="12">
                   <div class="chatPop1">
                     <span style="line-height: 23px">
-                      <el-image
-                        fit="cover"
-                        :src="ele.content"
-                        v-if="ele.type == 1"
-                      ></el-image>
-                      <p v-else>{{ ele.content }}</p>
+                      <viewer>
+                        <img
+                          :src="ele.content"
+                          class="img_cyy"
+                          v-if="ele.type == 1"
+                          @click="imgClick"
+                        >
+                        <p v-else>{{ ele.content }}</p>
+                      </viewer>
                     </span>
                   </div>
                 </el-col>
@@ -201,6 +209,11 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
+      mysrcList: [
+        "https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg",
+        "https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg",
+      ],
+      srcList: [], //放大后的图片数组
       inputValueImg: "", //上传链接地址的input
       oppinput: "",
       popInp: false,
@@ -218,7 +231,7 @@ export default {
       squareUrl: "",
       textarea2: "",
       leftUserList: [], //左侧用户
-      searchListArr:[],//根据搜索筛选后的左侧用户
+      searchListArr: [], //根据搜索筛选后的左侧用户
       contentChat: {}, //右侧主聊天框
       historyMassage: null, //历史聊天记录
       inputValue: "",
@@ -265,6 +278,9 @@ export default {
     },
   },
   methods: {
+    imgClick() {
+      console.log("156123");
+    },
     Inpcompany() {
       console.log(this.oppinput);
       this.sendBtn();
@@ -281,7 +297,8 @@ export default {
       var filetType = file.type; //文件类型
       //创建文件读取对象
       if (fileSize <= 10240 * 1024) {
-        if (filetType == "image/png") {
+        console.log(filetType);
+        if (filetType == "image/png" || filetType == "image/jpeg" || filetType == "image/gif") {
           this.imgFile = file;
           this.uploading(true);
         } else {
@@ -297,7 +314,7 @@ export default {
         var file_re = await this.readFileAsBuffer(this.imgFile);
         console.log(this.imgFile);
         this.$api.ossststoken().then((res) => {
-          console.log(res.data.data.date);
+          // console.log(res.data.data.date);
           let myData = res.data.data.date;
           let client = new window.OSS.Wrapper({
             region: "oss-cn-hangzhou", //oss地址
@@ -326,7 +343,7 @@ export default {
               let obj = {};
               if (this.oss_imgurl != "") {
                 obj = {
-                  type: "0",
+                  type: "1",
                   content: this.oss_imgurl,
                   user_id: this.contentChat.user_id,
                 };
@@ -395,7 +412,7 @@ export default {
             this.leftRight.push(ele.send_id);
             var reg = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/;
             if (reg.test(ele.content)) {
-              ele.type = 1;
+              // ele.type = 1;
             }
           });
           console.log(this.historyMassage, this.leftRight);
@@ -481,10 +498,11 @@ export default {
         }
       } else {
         obj = {
-          type: "0",
+          type: "1",
           content: this.oppinput,
           user_id: this.contentChat.user_id,
         };
+        // this.srcList.push(this.oppinput);
         await this.$api
           .userSay(obj)
           .then((res) => {
@@ -609,6 +627,11 @@ export default {
 };
 </script>
 <style>
+.websocket .img_cyy{
+  display: inline-block;
+  height: auto;
+  max-width: 100%;
+}
 .websocket .searchInp {
   transform: translateY(-4px);
 }
@@ -658,6 +681,11 @@ export default {
   position: relative;
   border: 1px solid #e3e3e3;
   max-width: 290px;
+  -webkit-word-break: break-all;
+  -moz-word-break: break-all;
+  -ms-word-break: break-all;
+  -o-word-break: break-all;
+  word-break: break-all;
 }
 .chatPop1 span::after {
   content: "";
@@ -667,6 +695,9 @@ export default {
   top: 8px;
   left: -16px;
 }
+/* .chatPop1 span p{
+  overflow: hidden;
+} */
 .chatPop2 :hover {
   background-color: #2683f5;
 }
@@ -681,6 +712,11 @@ export default {
   max-width: 290px;
   float: right;
   color: #fff;
+  -webkit-word-break: break-all;
+  -moz-word-break: break-all;
+  -ms-word-break: break-all;
+  -o-word-break: break-all;
+  word-break: break-all;
 }
 .chatPop2 span::after {
   content: "";
