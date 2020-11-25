@@ -34,6 +34,7 @@ export default {
       this.isLogin = sessionStorage.getItem("isLogin");
       console.log(this.isLogin);
     },
+
   },
   created() {
     this.getData();
