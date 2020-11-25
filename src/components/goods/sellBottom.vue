@@ -132,7 +132,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["search", "pageNum", "selectValue", "per_page"]),
+    ...mapState(["sellSearch", "pageNum", "selectValue", "per_page"]),
   },
   methods: {
     // 库存相关函数
@@ -327,8 +327,8 @@ export default {
   },
   created() {
     this.checkedFather = true;
-    console.log(this.search);
-    this.mySearch = this.$store.state.search;
+    console.log(this.sellSearch);
+    this.mySearch = this.$store.state.sellSearch;
     this.getData();
   },
   watch: {
@@ -336,9 +336,9 @@ export default {
     //   this.getData();
     //   // this.select();
     // },
-    "$store.state.search": {
+    "$store.state.sellSearch": {
       handler: function () {
-        this.mySearch = this.$store.state.search;
+        this.mySearch = this.$store.state.sellSearch;
         this.getData();
         // this.select();
       },

@@ -26,6 +26,7 @@
         </el-form-item>
         <el-form-item label="APP店铺背景图 :">
           <el-image :src="data.shop_head_picture"> </el-image>
+          
         </el-form-item>
         <el-form-item label="店铺名称 :">
           <el-input :disabled="true" :placeholder="data.shop_name"></el-input>

@@ -86,19 +86,29 @@ export default {
       tableData: [],
       tableData2: [],
       sku: [],
+      myexamine_Verify: null,
     };
   },
   computed: {
-    ...mapState(["search", "pageNum"]),
+    ...mapState(["examine_search", "pageNum", "examine_Verify"]),
   },
   methods: {
     getData() {
+      if (this.$store.state.examine_Verify == "待审核") {
+        this.myexamine_Verify = "0";
+      } else if (this.$store.state.examine_Verify == "审核未通过") {
+        this.myexamine_Verify = "1";
+      } else if (this.$store.state.examine_Verify == "审核通过") {
+        this.myexamine_Verify = "2";
+      } else {
+        this.myexamine_Verify = "";
+      }
       this.$api
         .goodsList({
           limit: this.per_page,
           keyword: this.mySearch,
           page: this.pageNum,
-          // verify_state:,
+          verify_state: this.myexamine_Verify,
         })
         .then((res) => {
           this.$store.commit("goodsList", res.data.data);
@@ -146,31 +156,13 @@ export default {
     // },
   },
   created() {
-    console.log(this.search);
-    // setInterval(()=>{
-    //   console.log(this.search)
-    // },1000)
-    // this.$api.goodsList().then((res) => {
-    //   this.$store.commit("goodsList", res.data.data);
-    //   console.log(res.data.data.data);
-    //   this.total = res.data.data.total;
-    //   this.per_page = res.data.data.per_page;
-    //   console.log(this.total, this.per_page);
-    //   this.tableData = res.data.data.data;
-    //   console.log(this.tableData);
-    //   this.tableData.forEach((ele) => {
-    //     // this.$set(ele.sku, "index", index);
-    //     this.sku.push(ele.sku);
-    //     // console.log(this.sku[index].index);
-    //     // this.tableData2 = ele.sku;
-    //   });
-    // });
+    this.mySearch = this.$store.state.examine_search;
     this.getData();
   },
   watch: {
-    "$store.state.search": {
+    "$store.state.examine_search": {
       handler: function () {
-        this.mySearch = this.$store.state.search;
+        this.mySearch = this.$store.state.examine_search;
         this.getData();
         // this.select();
       },
@@ -183,6 +175,19 @@ export default {
     "$store.state.per_page": function () {
       console.log(this.$store.state.per_page);
       this.per_page = this.$store.state.per_page;
+      this.getData();
+      // this.select();
+    },
+    "$store.state.examine_Verify": function () {
+      if (this.$store.state.examine_Verify == "待审核") {
+        this.myexamine_Verify = "0";
+      } else if (this.$store.state.examine_Verify == "审核未通过") {
+        this.myexamine_Verify = "1";
+      } else if (this.$store.state.examine_Verify == "审核通过") {
+        this.myexamine_Verify = "2";
+      } else {
+        this.myexamine_Verify = "";
+      }
       this.getData();
       // this.select();
     },

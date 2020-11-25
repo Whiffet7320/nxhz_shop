@@ -17,7 +17,8 @@ export default new Vuex.Store({
     details: {},
     breadListState: [], // 面包屑列表数据
     goodsList: [],
-    search: '',
+    sellSearch: '',
+    examine_search:'',
     pageNum: 1,
     passWord: null,//用户密码
     orderSelect: null,//订单状态
@@ -29,6 +30,7 @@ export default new Vuex.Store({
     isDotNum: '',//websocket中的isDot
     startTime:null,//根据时间筛选（订单页） 开始
     endTime:null,//结束时间
+    examine_Verify:null,//examine的verify_state（审核）
   },
   mutations: {
     changeModal(state, boolean) {
@@ -61,8 +63,11 @@ export default new Vuex.Store({
     edit(state, list) {
       state.edit = list;
     },
-    search(state, str) {
-      state.search = str;
+    sellSearch(state, str) {
+      state.sellSearch = str;
+    },
+    examine_search(state, str) {
+      state.examine_search = str;
     },
     pageNum(state, num) {//页码
       state.pageNum = num;
@@ -99,6 +104,9 @@ export default new Vuex.Store({
     },
     endTime(state, num) {//根据时间筛选（订单页）结束
       state.endTime = num;
+    },
+    examine_Verify(state, num) {
+      state.examine_Verify = num;
     },
   },
   actions: {

@@ -13,7 +13,7 @@
       >
         <!-- <div class="inline-box"> -->
         <el-form-item label="审核状态:" prop="region" class="region">
-          <el-select v-model="opValue" placeholder="审核中">
+          <el-select v-model="opValue" placeholder="审核状态">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -46,6 +46,7 @@
   </div>
 </template>
 <script>
+import { mapState } from "vuex";
 export default {
   data() {
     return {
@@ -61,75 +62,60 @@ export default {
       myOptions: [],
       options: [
         {
-          value: "选项1",
-          label: "审核中",
+          value: "待审核",
+          label: "待审核",
         },
         {
-          value: "选项2",
-          label: "已拒绝",
+          value: "审核未通过",
+          label: "审核未通过",
+        },
+        {
+          value: "审核通过",
+          label: "审核通过",
         },
       ],
       opValue: "",
     };
   },
+  computed: {
+    ...mapState(["examine_Verify"]),
+  },
   methods: {
     onSubmit() {
       console.log("submit!");
-      this.$store.commit("search", this.search);
+      console.log(this.opValue);
+      this.$store.commit("examine_Verify", this.opValue);
+      this.$store.commit("examine_search", this.search);
       this.$store.commit("pageNum", 1);
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
       this.search = "";
-      this.onSubmit()
+      this.opValue = "";
+      this.$store.commit("pageNum", 1);
+      this.onSubmit();
     },
     toGrant() {
       this.$store.commit("edit", { sort: "0" });
+      this.$store.commit("pageNum", 1);
       this.$router.push({ name: "Edit" });
-    },
-    handleChange(value) {
-      console.log(value);
     },
   },
   created() {
-    // this.$api.goodsList().then((res) => {
-    //   console.log(res.data.data);
-    // });
-    this.$api.allList().then((res) => {
+    // if(this.examine_Verify)
+    this.opValue = this.examine_Verify
+    console.log(this.examine_Verify,',', this.opValue);
+    // if(this.examine_Verify == 0){
+    //   this.opValue = '待审核'
+    // } else if(this.examine_Verify == 1){
+    //   this.opValue = '审核未通过'
+    // }else if(this.examine_Verify == 2){
+    //   this.opValue = '审核通过'
+    // }else{
+    //   this.opValue = ''
+    // }
+    this.$api.goodsList().then((res) => {
       console.log(res.data.data);
-      this.myOptions = res.data.data;
-      const arr = JSON.parse(
-        JSON.stringify(this.myOptions)
-          .replace(/cat_name/g, "label")
-          .replace(/cat_id/g, "value")
-          .replace(/child/g, "children")
-      );
-      // arr.child = JSON.parse(JSON.stringify(arr.child).replace(/child/g, 'children'))
-      // arr.forEach(ele=>{
-      //   // console.log(ele)
-      //   const arr2 = JSON.parse(JSON.stringify(ele).replace(/child/g, 'children'))
-      //     // console.log(arr2)
-      //     ele = arr2
-      //   ele.children.forEach(item=>{
-      //     // console.log(item)
-      //     // item.replace(/cat_name/g, 'value')
-      //     const arr3 = JSON.parse(JSON.stringify(item).replace(/child/g, 'children'))
-      //     // console.log(arr3)
-      //     item = arr3
-      //   })
-      // })
-      // arr.child.replace(/cat_name/g, 'value')
-
-      // this.myOptions.forEach((ele,index)=>{
-      //   // console.log(ele)
-      //   console.log(this.options[index])
-      //   if(this.options[index].label){
-      //     this.options
-      //   }
-      //   this.options[index].label = ele.cat_name
-      // })
-      this.myOptions = arr;
-      console.log(this.myOptions);
     });
   },
 };

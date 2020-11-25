@@ -111,11 +111,6 @@ const routes = [
                 name: 'record',
                 component: () => import('./components/operate/record.vue')
             },
-            {
-                path: 'demo',
-                name: 'demo',
-                component: () => import('./components/demo/index')
-            },
         ]
     },
     {

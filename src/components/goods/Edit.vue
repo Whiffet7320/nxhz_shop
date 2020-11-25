@@ -82,8 +82,7 @@
             <el-form-item label="分类:" prop="region" class="region">
               <div class="block">
                 <el-cascader
-                  v-model="value"
-                  :placeholder="value"
+                  v-model="optionProps"
                   :options="myOptions2"
                   :props="{ checkStrictly: true }"
                   @change="handleChange"
@@ -264,6 +263,7 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
+      optionProps: [], //必须为数组
       imgList: [], //商品相册
       img_id: null,
       skuGoods_img: "",
@@ -278,7 +278,6 @@ export default {
       dialogImageUrl: "",
       dialogVisible: false, //商品主图
       myOptions2: [],
-      value2: "",
       edit: "",
       value: "",
       myOptions: [],
@@ -557,6 +556,18 @@ export default {
     getData() {
       this.loading = true;
       console.log(this.goodsId);
+      this.$api.allList().then((res) => {
+        console.log(res.data.data);
+        this.myOptions2 = res.data.data;
+        const arr = JSON.parse(
+          JSON.stringify(this.myOptions2)
+            .replace(/cat_name/g, "label")
+            .replace(/cat_id/g, "value")
+            .replace(/child/g, "children")
+        );
+        this.myOptions2 = arr;
+        console.log(this.myOptions2);
+      });
       if (this.goodsId) {
         this.$api.imageList(this.goodsId).then((res) => {
           console.log(res.data.data, "imgList");
@@ -581,12 +592,11 @@ export default {
           this.edit = res.data.data;
           // this.value = this.edit.cat1
           console.log(this.edit);
-          // this.cat1_id = this.edit.cat1_id;
-          // this.cat2_id = this.edit.cat2_id;
-          // this.cat3_id = this.edit.cat3_id;
+          this.cat1_id = this.edit.cat1_id;
+          this.cat2_id = this.edit.cat2_id;
+          this.cat3_id = this.edit.cat3_id;
           const arr = [],
-            arr2 = [],
-            arr3 = [];
+            arr2 = [];
           const obj = {};
           obj.label = this.edit.cat1.cat_name;
           obj.value = this.edit.cat1.cat_id;
@@ -599,30 +609,22 @@ export default {
           arr2.push(obj2);
           obj.children = arr2;
           this.myOptions = arr;
-          if (this.edit.cat2) {
-            this.value =
-              this.myOptions[0].label +
-              "/" +
-              this.myOptions[0].children[0].label;
-          } else if (this.edit.cat3) {
-            console.log(11111111);
-            const obj3 = JSON.parse(
-              JSON.stringify(this.edit.cat3)
-                .replace(/cat_name/g, "label")
-                .replace(/cat_id/g, "value")
-            );
-            obj2.children = arr3;
-            arr3.push(obj3);
-            this.value =
-              this.myOptions[0].label +
-              "/" +
-              this.myOptions[0].children[0].label +
-              "/" +
-              this.myOptions[0].children[0].children[0].label;
+
+          // this.optionProps = [this.edit.cat1_id,this.edit.cat2_id,this.edit.cat3_id]
+          if (this.edit.cat3) {
+            this.optionProps = [
+              this.edit.cat1_id,
+              this.edit.cat2_id,
+              this.edit.cat3_id,
+            ];
+          } else if (this.edit.cat2) {
+            this.optionProps = [this.edit.cat1_id, this.edit.cat2_id];
           } else {
-            this.value = this.myOptions[0].label;
+            this.optionProps = [this.edit.cat1_id];
           }
           console.log(this.myOptions);
+          console.log(this.value);
+          // this.value = '111122'
 
           this.goods_name = this.edit.goods_name;
           this.goods_id = this.edit.goods_id;
@@ -630,6 +632,7 @@ export default {
           this.goods_img = this.edit.goods_img;
           this.content = this.edit.content;
           this.sort = this.edit.sort;
+
           // this.skuGoods_img = this.edit
           // this.cat1_id = this.edit.cat1_id;
           // this.cat2_id = this.edit.cat2_id;
@@ -643,18 +646,18 @@ export default {
         this.$router.push({ name: "sell" });
       }
 
-      this.$api.allList().then((res) => {
-        console.log(res.data.data);
-        this.myOptions2 = res.data.data;
-        const arr = JSON.parse(
-          JSON.stringify(this.myOptions2)
-            .replace(/cat_name/g, "label")
-            .replace(/cat_id/g, "value")
-            .replace(/child/g, "children")
-        );
-        this.myOptions2 = arr;
-        console.log(this.myOptions2);
-      });
+      // this.$api.allList().then((res) => {
+      //   console.log(res.data.data);
+      //   this.myOptions2 = res.data.data;
+      //   const arr = JSON.parse(
+      //     JSON.stringify(this.myOptions2)
+      //       .replace(/cat_name/g, "label")
+      //       .replace(/cat_id/g, "value")
+      //       .replace(/child/g, "children")
+      //   );
+      //   this.myOptions2 = arr;
+      //   console.log(this.myOptions2);
+      // });
     },
     // 保存按钮
     preservation() {
@@ -674,6 +677,7 @@ export default {
         cat2_id: this.cat2_id,
         cat3_id: this.cat3_id,
         goods_images: this.goods_images,
+        sort: this.sort,
       };
       console.log(myObj);
       this.$api
@@ -688,6 +692,7 @@ export default {
     },
     handleChange(value) {
       console.log(value);
+      this.optionProps = value;
       this.cat1_id = value[0];
       this.cat2_id = value[1];
       this.cat3_id = value[2];
@@ -697,6 +702,7 @@ export default {
     },
     backTo() {
       // this.$router.push({ name: "sell" });
+      this.$store.commit("pageNum", 1);
       this.$router.go(-1);
     },
     handleClick(tab, event) {

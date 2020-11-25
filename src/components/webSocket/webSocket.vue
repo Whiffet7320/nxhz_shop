@@ -11,6 +11,7 @@
           <div style="padding: 10px">
             <div style="display: inline-block">
               <el-input
+                class="searchInp"
                 placeholder="搜索"
                 prefix-icon="el-icon-search"
                 v-model="input2"
@@ -23,7 +24,7 @@
 
         <el-row class="userList">
           <div
-            v-for="(ele, index) in leftUserList"
+            v-for="(ele, index) in searchListArr"
             :key="index"
             @click="userClick(ele, index)"
             class="user"
@@ -217,6 +218,7 @@ export default {
       squareUrl: "",
       textarea2: "",
       leftUserList: [], //左侧用户
+      searchListArr:[],//根据搜索筛选后的左侧用户
       contentChat: {}, //右侧主聊天框
       historyMassage: null, //历史聊天记录
       inputValue: "",
@@ -249,12 +251,17 @@ export default {
         console.log(1111221111);
         this.getLeftUserList();
       }, 500);
-      console.log(this.isDotList.length)
+      console.log(this.isDotList.length);
       if (this.isDotList.length == 0) {
         this.$store.commit("overallIsDot", false);
         console.log("已空");
       }
       console.log(this.isDotList);
+    },
+    input2: function () {
+      this.searchListArr = this.leftUserList.filter((ele) => {
+        return ele.nick_name.indexOf(this.input2) != -1;
+      });
     },
   },
   methods: {
@@ -384,7 +391,7 @@ export default {
           this.historyMassage = res.data.data;
           this.leftRight = [];
           this.historyMassage.forEach((ele) => {
-            ele.myadd_time = this.formatDate(new Date(ele.add_time)); //聊天时间
+            ele.myadd_time = this.formatDate(new Date(ele.add_time * 1000)); //聊天时间
             this.leftRight.push(ele.send_id);
             var reg = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/;
             if (reg.test(ele.content)) {
@@ -404,7 +411,7 @@ export default {
       this.webFlag = false;
       console.log(ele, index);
       // this.isDotList[index] = "";
-      console.log(this.isDotList)
+      console.log(this.isDotList);
       if (this.isDotList.length != 0) {
         // ******点击左侧用户列表后小红点消失且不重新跳到下面******
         this.isDotList = this.isDotList.filter((num) => {
@@ -412,7 +419,7 @@ export default {
           return num != ele.user_id;
         });
       }
-      console.log(this.isDotList)
+      console.log(this.isDotList);
       this.$store.commit("isDotNum", this.isDotList);
       this.contentChat = ele;
       this.userHistory();
@@ -521,10 +528,6 @@ export default {
     // var g=1551334252272; //定义一个时间戳变量
     // var d=new Date(g);
     getLeftUserList() {
-      // console.log(this.leftUserList)
-      // if(this.leftUserList.length!=0){
-      //   return;
-      // }
       this.$api.userList().then((res) => {
         //获取聊天用户列表
         console.log(res.data.data);
@@ -555,6 +558,7 @@ export default {
         // this.leftUserList.forEach(item=>{
         //   // item.un_read_number
         // })
+        this.searchListArr = this.leftUserList;
       });
     },
 
@@ -605,6 +609,9 @@ export default {
 };
 </script>
 <style>
+.websocket .searchInp {
+  transform: translateY(-4px);
+}
 .websocket .el-popover button {
   margin-top: 20px !important;
 }

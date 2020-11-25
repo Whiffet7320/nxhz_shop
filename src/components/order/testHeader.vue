@@ -1,12 +1,6 @@
 <template>
   <div class="shop-header">
     <div class="s-header">
-      <!-- <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ name: 'testContent' }">订单管理</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ name: 'testContent' }">订单列表</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ name: 'details' }">订单详情页</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ name: 'details' }"></el-breadcrumb-item>
-      </el-breadcrumb> -->
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item
           v-for="(item, index) in list[0].meta"
@@ -14,12 +8,6 @@
           :to="item.url"
         >
           {{ item.title }}
-          <!-- <router-link v-if="item.url" :to="item.url">{{
-            item.title
-          }}</router-link> -->
-          <!-- <a v-else>
-            {{ item.title }}
-          </a> -->
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -31,10 +19,11 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      list:null,
+    };
   },
   created() {
-    // console.log(this.$route.matched);
     console.log(this.$route.params);
     // let match = this.$route.matched.filter(item=>item.meta)
     // console.log(match)
