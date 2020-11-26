@@ -8,6 +8,7 @@
         layout="total, prev, pager, next, jumper,sizes"
         :total="this.myTotal"
         :page-sizes="[10, 15, 20, 30]"
+        :current-page="examine_pageNum"
         ref="page"
       >
       </el-pagination>
@@ -32,7 +33,7 @@ export default {
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
-      this.$store.commit("pageNum", val);
+      this.$store.commit("examine_pageNum", val);
       // console.log(this.myGoodsList.splice(val-1,3))
       // this.myGoodsList = this.goodsList
       // this.newGoodsList = this.myGoodsList.data.splice(val-1,3)
@@ -46,7 +47,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(["goodsList", "total"]),
+    ...mapState(["goodsList", "total","examine_pageNum"]),
   },
   created() {
     // console.log(this.goodsList)
@@ -57,8 +58,8 @@ export default {
     "$store.state.total": function () {
       this.getTotal();
     },
-    "$store.state.pageNum": function () {
-      if (this.$store.state.pageNum == 1) {
+    "$store.state.good_pageNum": function () {
+      if (this.$store.state.good_pageNum == 1) {
         this.$refs.page.$children[2].$el.children[0].click();
       }
     },

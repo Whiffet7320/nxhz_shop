@@ -22,7 +22,7 @@
             <el-option label="交易关闭" value="交易关闭"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="下单时间"  class="time">
+        <el-form-item label="下单时间" class="time">
           <el-col :span="12">
             <el-form-item prop="date1">
               <el-date-picker
@@ -47,7 +47,6 @@
             </el-form-item>
           </el-col>
         </el-form-item>
-        
 
         <el-form-item class="contentTop-btn">
           <el-button type="primary" @click="onSubmit" class="search"
@@ -72,6 +71,7 @@
   </div>
 </template>
 <script>
+import { mapState } from "vuex";
 export default {
   data() {
     return {
@@ -91,6 +91,12 @@ export default {
       value1: "",
       value2: "",
     };
+  },
+  computed: {
+    ...mapState(["order_testContent_search"]),
+  },
+  created(){
+    this.phoneInput = this.order_testContent_search
   },
   methods: {
     formatDate(now) {
@@ -117,23 +123,22 @@ export default {
     timeChange() {
       console.log(this.ruleForm.date1, this.ruleForm.date2);
       console.log(
-        Date.parse(this.ruleForm.date1) ,
+        Date.parse(this.ruleForm.date1),
         "__",
-        Date.parse(this.ruleForm.date2) 
+        Date.parse(this.ruleForm.date2)
       );
       this.startTime = this.formatDate(
-        new Date(Date.parse(this.ruleForm.date1) )
+        new Date(Date.parse(this.ruleForm.date1))
       );
-      this.endTime = this.formatDate(
-        new Date(Date.parse(this.ruleForm.date2) )
-      );
+      this.endTime = this.formatDate(new Date(Date.parse(this.ruleForm.date2)));
     },
     onSubmit() {
       console.log("submit!", this.ruleForm.region);
-      this.$store.commit("search", this.phoneInput);
+      this.$store.commit("order_testContent_search", this.phoneInput);
       this.$store.commit("orderSelect", this.ruleForm.region);
       this.$store.commit("startTime", this.startTime);
       this.$store.commit("endTime", this.endTime);
+      this.$store.commit("pageNum", 1);
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
@@ -142,6 +147,7 @@ export default {
       this.value2 = "";
       this.endTime = "";
       this.startTime = "";
+      this.$store.commit("pageNum", 1);
       this.onSubmit();
     },
   },

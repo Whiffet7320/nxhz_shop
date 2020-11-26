@@ -17,6 +17,7 @@
     "vue-native-websocket": "^2.0.14",
     "vue-router": "^3.4.3",
     "vuex": "^3.5.1",
+    "wangeditor": "^4.5.1",
     "ws": "^7.4.0"
   },
   "devDependencies": {

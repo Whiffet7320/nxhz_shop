@@ -8,7 +8,7 @@
         layout="total, prev, pager, next, jumper,sizes"
         :total="this.myTotal"
         :page-sizes="[10, 15, 20, 30]"
-        :current-page="pageNum"
+        :current-page="good_pageNum"
         ref="page"
       >
       </el-pagination>
@@ -33,18 +33,24 @@ export default {
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
-      this.$store.commit("pageNum", val);
+      this.$store.commit("good_pageNum", val);
+      // console.log(this.myGoodsList.splice(val-1,3))
+      // this.myGoodsList = this.goodsList
+      // this.newGoodsList = this.myGoodsList.data.splice(val-1,3)
+      // this.myGoodsList.data = this.newGoodsList
+      // this.$store.commit('goodsList',this.myGoodsList)
+      // console.log([1,2,3,4,5,6,7,8,9,10,11,12].splice(val-1,3))
     },
     getTotal() {
-      this.myTotal = this.order_total;
+      this.myTotal = this.total;
       console.log(this.myTotal);
     },
   },
   computed: {
-    ...mapState(["goodsList", "order_total", "pageNum"]),
+    ...mapState(["goodsList", "total","good_pageNum"]),
   },
   created() {
-    // console.log(this.$refs);
+    // console.log(this.goodsList)
     this.myGoodsList = this.goodsList.data;
     this.getTotal();
   },
@@ -52,18 +58,16 @@ export default {
     "$store.state.total": function () {
       this.getTotal();
     },
-    "$store.state.pageNum": {
-      handler() {
-        if (this.$store.state.pageNum == 1) {
-          this.$refs.page.$children[2].$el.children[0].click();
-        }
-      },
+    "$store.state.good_pageNum": function () {
+      if (this.$store.state.good_pageNum == 1) {
+        this.$refs.page.$children[2].$el.children[0].click();
+      }
     },
   },
 };
 </script>
 <style>
-.order-content .page {
+.sell-content .page {
   padding: 0 60px 60px 60px;
   float: right;
 }

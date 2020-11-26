@@ -6,19 +6,19 @@
   </div>
 </template>
 <script>
-import ContentTop from './testTop'
-import ContentBotton from './testBottom'
-import Page from './page'
+import ContentTop from "./testTop";
+import ContentBotton from "./testBottom";
+import Page from "./page";
 export default {
-  components:{
+  components: {
     ContentTop,
     ContentBotton,
-    Page
-  }
-}
+    Page,
+  },
+};
 </script>
 <style>
-.order-content{
+.order-content {
   position: relative;
   height: 100%;
 }

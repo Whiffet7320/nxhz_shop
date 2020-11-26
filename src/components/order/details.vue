@@ -73,15 +73,15 @@
           </div>
         </div>
       </div>
-      <div class="below">
+      <div class="below" v-if="myOrder.order_express">
         <div class="below-one">
           <p class="tit">快递名称：</p>
           <p class="tit">快递单号：</p>
         </div>
         <div class="below-two">
-          <p class="tit">{{ myOrder.order_express }}</p>
+          <p class="tit">{{ myOrder.order_express.shipping_name }}</p>
           <!-- myOrder.order_express 可能会null -->
-          <!-- <p class="tit">{{myOrder.order_express.express_number}}</p> -->
+          <p class="tit">{{ myOrder.order_express.express_number }}</p>
         </div>
       </div>
     </div>
@@ -90,6 +90,9 @@
 <script>
 import { mapState } from "vuex";
 export default {
+  // beforeRouteLeave(to, from) {
+  //   console.log(to, from,"beforeRouteLeave_details");
+  // },
   data() {
     return {
       myOrder: {},
@@ -98,7 +101,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["details"]),
+    ...mapState(["details", "pageNum"]),
   },
   created() {
     // console.log(this.details.);
@@ -141,7 +144,10 @@ export default {
       );
     },
     backTo() {
-      this.$router.push({ name: "order" });
+      // console.log(this.$store.state.order_testContent_backTo);
+      this.$store.commit("pageNum", this.pageNum);
+      // console.log(this.$store.state.order_testContent_backTo);
+      this.$router.go(-1);
     },
   },
 };

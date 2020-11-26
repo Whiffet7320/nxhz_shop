@@ -108,7 +108,7 @@ export default {
     },
     orderChange(obj) {
         return myPost({
-            url: urls.infoChange,
+            url: urls.orderChange,
             params: {
                 ...obj
             },

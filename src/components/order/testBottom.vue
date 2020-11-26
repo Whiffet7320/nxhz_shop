@@ -121,6 +121,7 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
+      myPer_page: 10,
       cyy: "", //发货的快递公司
       myOrderSelect: "",
       mySearch: "",
@@ -150,7 +151,14 @@ export default {
     };
   },
   computed: {
-    ...mapState(["search", "pageNum", "orderSelect", "endTime", "startTime"]),
+    ...mapState([
+      "order_testContent_search",
+      "pageNum",
+      "per_page",
+      "orderSelect",
+      "endTime",
+      "startTime",
+    ]),
   },
   methods: {
     getValue(value) {
@@ -197,9 +205,14 @@ export default {
           break;
       }
       console.log(this.orderChangeObj);
-      this.$api.orderChange(this.orderChangeObj).then((res) => {
-        console.log(res);
-      });
+      this.$api
+        .orderChange(this.orderChangeObj)
+        .then((res) => {
+          console.log(res);
+        })
+        .then(() => {
+          this.getData();
+        });
       this.dialogFormVisible = false;
     },
     deliverGoods(scope, type) {
@@ -238,18 +251,20 @@ export default {
       const orderListObj = {
         begin_time: this.startTime,
         end_time: this.endTime,
-        keyword: this.search,
+        keyword: this.mySearch,
+        limit: this.myPer_page,
+        page: this.myPageNum,
       };
       console.log(orderListObj);
       this.$api.orderList(orderListObj).then((res) => {
-        // console.log(res.data.data);
+        console.log(res.data.data);
         this.orderList = res.data.data;
         this.$store.commit("goodsList", res.data.data);
         this.total = res.data.total;
-        this.per_page = res.data.per_page;
+        // this.per_page = res.data.per_page;
         console.log(this.total, this.per_page);
-        this.$store.commit("per_page", this.per_page);
-        this.$store.commit("total", res.data.data.length);
+        // this.$store.commit("per_page", this.per_page);
+        this.$store.commit("order_total", this.total);
         this.orderList.forEach((ele) => {
           ele.user = `    <img class="ava"
       style="width: 70px; height: 70px"
@@ -298,11 +313,16 @@ export default {
     },
   },
   created() {
+    this.myPageNum = this.pageNum;
+    console.log(this.myPageNum);
+    // this.$store.commit("pageNum", this.myPageNum);
+    console.log(this.$store.state.pageNum);
+    this.$store.commit("per_page", 10);
     this.getData();
   },
   watch: {
-    "$store.state.search": function () {
-      this.mySearch = this.$store.state.search;
+    "$store.state.order_testContent_search": function () {
+      this.mySearch = this.$store.state.order_testContent_search;
       // console.log('xiugaile')
       this.getData();
     },
@@ -312,6 +332,12 @@ export default {
       // setTimeout(() => {
       //   this.select();
       // }, 300);
+    },
+    "$store.state.per_page": function () {
+      // console.log(this.$store.state.pageNum)
+      this.myPer_page = this.$store.state.per_page;
+      this.getData();
+      // this.select();
     },
     "$store.state.orderSelect": function () {
       this.myOrderSelect = this.$store.state.orderSelect;

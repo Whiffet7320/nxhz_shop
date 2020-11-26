@@ -70,7 +70,7 @@ export default {
     onSubmit() {
       console.log("submit!");
       this.$store.commit("sellSearch", this.search);
-      this.$store.commit("pageNum", 1);
+      this.$store.commit("good_pageNum", 1);
       this.$store.commit("selectValue", this.myValue);
       // this.$router.go(0)
     },
@@ -78,14 +78,14 @@ export default {
       this.$refs[formName].resetFields();
       this.search = "";
       this.myValue = [];
-      this.$store.commit("pageNum", 1);
+      this.$store.commit("good_pageNum", 1);
       this.onSubmit();
     },
     toGrant() {
       //新建
       // this.$store.commit("edit", { sort: "0" });
       this.$store.commit("goodsId", " ");
-      this.$store.commit("pageNum", 1);
+      this.$store.commit("good_pageNum", 1);
       this.$store.commit("nameSort", { nameF: "first", nameS: "second" });
       this.$router.push({ name: "Edit" });
     },

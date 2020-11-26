@@ -8,7 +8,7 @@
 <script>
 import ContentTop from './examineTop'
 import ContentBotton from './examineBottom'
-import Page from './page'
+import Page from './examinepage'
 export default {
   components:{
     ContentTop,

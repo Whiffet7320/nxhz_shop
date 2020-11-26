@@ -48,9 +48,9 @@ const routes = [
         name: 'order',
         redirect: 'order/testContent',
         component: () => import('./components/order/index.vue'),
-        meta:[
-            {title:'订单管理',url:'/order/testContent',flag:true},
-            {title:'订单列表',url:'/order/testContent',flag:true},
+        meta: [
+            { title: '订单管理', url: '/order/testContent', flag: true },
+            { title: '订单列表', url: '/order/testContent', flag: true },
             // {title:'订单',url:'/order/details',flag:true},
             // {title:'评论列表',url:'/order/commentList',flag:true}
         ],
@@ -63,7 +63,11 @@ const routes = [
             {
                 path: 'details',
                 name: 'details',
-                component: () => import('./components/order/details.vue')
+                component: () => import('./components/order/details.vue'),
+                // beforeEnter(to, from, next) {
+                //     console.log(to, from)
+                //     next()
+                // },
             },
             {
                 path: 'commentList',

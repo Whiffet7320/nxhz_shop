@@ -90,7 +90,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["examine_search", "pageNum", "examine_Verify"]),
+    ...mapState(["examine_search", "examine_pageNum", "examine_Verify"]),
   },
   methods: {
     getData() {
@@ -107,7 +107,7 @@ export default {
         .goodsList({
           limit: this.per_page,
           keyword: this.mySearch,
-          page: this.pageNum,
+          page: this.myPageNum,
           verify_state: this.myexamine_Verify,
         })
         .then((res) => {
@@ -156,6 +156,8 @@ export default {
     // },
   },
   created() {
+    this.myPageNum = this.examine_pageNum;
+    this.$store.commit('per_page',10)
     this.mySearch = this.$store.state.examine_search;
     this.getData();
   },
@@ -167,9 +169,9 @@ export default {
         // this.select();
       },
     },
-    "$store.state.pageNum": function () {
+    "$store.state.examine_pageNum": function () {
       // console.log(this.$store.state.pageNum)
-      this.myPageNum = this.$store.state.pageNum;
+      this.myPageNum = this.$store.state.examine_pageNum;
       this.getData();
     },
     "$store.state.per_page": function () {

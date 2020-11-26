@@ -6,7 +6,8 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    total: null,
+    total: null,//goods
+    order_total:null,
     per_page: 10,
     showModal: false,
     editStu: {},
@@ -19,7 +20,11 @@ export default new Vuex.Store({
     goodsList: [],
     sellSearch: '',
     examine_search:'',
-    pageNum: 1,
+    order_testContent_search:'',
+    order_commentList_search:'',
+    good_pageNum: 1,
+    examine_pageNum:1,
+    pageNum:1,
     passWord: null,//用户密码
     orderSelect: null,//订单状态
     goodsId: null,//添加编辑的商品
@@ -69,7 +74,13 @@ export default new Vuex.Store({
     examine_search(state, str) {
       state.examine_search = str;
     },
-    pageNum(state, num) {//页码
+    good_pageNum(state, num) {//order页码
+      state.good_pageNum = num;
+    },
+    examine_pageNum(state, num) {// examine页码
+      state.examine_pageNum = num;
+    },
+    pageNum(state, num) {//order页码
       state.pageNum = num;
     },
     total(state, num) {//总数据
@@ -107,6 +118,12 @@ export default new Vuex.Store({
     },
     examine_Verify(state, num) {
       state.examine_Verify = num;
+    },
+    order_testContent_search(state, str){
+      state.order_testContent_search = str;
+    },
+    order_total(state, num) {//总数据
+      state.order_total = num;
     },
   },
   actions: {

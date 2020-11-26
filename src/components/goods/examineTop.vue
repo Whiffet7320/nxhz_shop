@@ -86,25 +86,26 @@ export default {
       console.log(this.opValue);
       this.$store.commit("examine_Verify", this.opValue);
       this.$store.commit("examine_search", this.search);
-      this.$store.commit("pageNum", 1);
+      this.$store.commit("examine_pageNum", 1);
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
       this.search = "";
       this.opValue = "";
-      this.$store.commit("pageNum", 1);
+      this.$store.commit("examine_pageNum", 1);
       this.onSubmit();
     },
     toGrant() {
+      this.$store.commit("goodsId", " ");
       this.$store.commit("edit", { sort: "0" });
-      this.$store.commit("pageNum", 1);
+      this.$store.commit("examine_pageNum", 1);
       this.$router.push({ name: "Edit" });
     },
   },
   created() {
     // if(this.examine_Verify)
-    this.opValue = this.examine_Verify
-    console.log(this.examine_Verify,',', this.opValue);
+    this.opValue = this.examine_Verify;
+    console.log(this.examine_Verify, ",", this.opValue);
     // if(this.examine_Verify == 0){
     //   this.opValue = '待审核'
     // } else if(this.examine_Verify == 1){

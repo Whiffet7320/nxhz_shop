@@ -44,41 +44,7 @@
                 @click="uploading(true)"
                 >保存</el-button
               >
-              <!--  -->
             </el-form-item>
-            <!-- <el-form-item label="商品轮播图 :">
-              <el-image
-                v-for="(ele, index) in edit.goods_images"
-                :key="index"
-                :src="ele.image_path"
-                v-model="goods_images"
-              >
-              </el-image>
-              <div class="button companyButton">
-                <el-button
-                  type="primary"
-                  @click="companyList"
-                  icon="el-icon-share"
-                  >更换轮播图</el-button
-                >
-              </div>
-
-              <input
-                type="file"
-                name="companyLogo"
-                id="file0"
-                class="displayN"
-                multiple="multiple"
-                @change="companyLogo($event, 'arr')"
-                ref="fileInputList"
-              />
-              <el-button
-                type="primary"
-                class="displayN"
-                @click="uploading(true)"
-                >保存</el-button
-              >
-            </el-form-item> -->
             <el-form-item label="分类:" prop="region" class="region">
               <div class="block">
                 <el-cascader
@@ -92,32 +58,28 @@
             <!-- <el-form-item label="分类 :">
               <el-input :placeholder="edit.value" v-model="value"></el-input>
             </el-form-item> -->
-            <el-form-item label="商品详情 :" class="inputDetails">
-              <el-input
-                type="textarea"
-                :autosize="{ minRows: 2, maxRows: 4 }"
-                :placeholder="edit.content"
-                v-model="content"
-                v-html="content"
-              >
-              </el-input>
-            </el-form-item>
             <el-form-item label="排序 :">
               <el-input :placeholder="edit.sort" v-model="sort"></el-input>
             </el-form-item>
-            <el-form-item label="是否上架 :">
-              <!-- <el-input
-                :disabled="true"
-                :placeholder="edit.is_on_sale == 1 ? '上架' : '下架'"
-                :v-model="is_on_sale == 1 ? '上架' : '下架'"
-              ></el-input> -->
+            <el-form-item label="是否上架 :" v-if="radio_Flag">
               <el-radio v-model="is_on_sale" :label="1">上架</el-radio>
               <el-radio v-model="is_on_sale" :label="0">下架</el-radio>
+            </el-form-item>
+            <el-form-item label="是否上架 :" v-else>
+              <el-radio disabled v-model="radio" :label="0">上架</el-radio>
+              <el-radio disabled v-model="radio" :label="1">下架</el-radio>
+            </el-form-item>
+            <el-form-item label="商品详情 :" class="inputDetails">
+              <div id="editor"></div>
             </el-form-item>
             <el-button type="primary" @click="preservation">保存</el-button>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="SKU设置" :name="nameSort.nameS">
+        <el-tab-pane
+          label="SKU设置"
+          :name="nameSort.nameS"
+          v-if="sku_image_Flag"
+        >
           <el-table :data="skuList" style="width: 100%">
             <!-- <el-table-column prop="sale_attr_name" label="SKU Id">
               <template slot-scope="scope">
@@ -186,7 +148,7 @@
                 />
               </template>
             </el-table-column>
-            <el-table-column prop="address" label="销售单位" width="200">
+            <el-table-column prop="address" label="销售单位" min-width="120">
               <template slot-scope="scope">
                 <el-input v-model="scope.row.unit" placeholder=""></el-input>
               </template>
@@ -195,6 +157,7 @@
               label="是否上架"
               class-name="column-bg-color-editable"
               show-overflow-tooltip
+              min-width="150"
             >
               <template slot-scope="scope">
                 <el-radio v-model="scope.row.is_on_sale" :label="1"
@@ -228,7 +191,7 @@
           ></el-button>
           <!-- <el-button type="primary" class="addBtn" @click="addRow(skuList)">新增</el-button> -->
         </el-tab-pane>
-        <el-tab-pane label="商品相册" name="third">
+        <el-tab-pane label="商品相册" name="third" v-if="sku_image_Flag">
           <div class="blockImage">
             <div class="block" v-for="(item, index) in imgList" :key="index">
               <el-image :src="item.image_path"></el-image>
@@ -260,9 +223,15 @@
 </template>
 <script>
 import { mapState } from "vuex";
+import E from "wangeditor";
+// const editor = new E('#div1')
+// editor.create()
 export default {
   data() {
     return {
+      sku_image_Flag: true,
+      radio_Flag: true,
+      editor: null, //富文本
       optionProps: [], //必须为数组
       imgList: [], //商品相册
       img_id: null,
@@ -332,10 +301,15 @@ export default {
   },
   components: {},
   computed: {
-    ...mapState(["goodsId", "nameSort"]),
+    ...mapState(["goodsId", "nameSort", "good_pageNum"]),
   },
   created() {
     this.getData();
+  },
+  mounted() {
+    this.editor = new E("#editor");
+    this.editor.create();
+    this.editor.txt.html(this.content);
   },
   methods: {
     // 删除图片
@@ -389,7 +363,11 @@ export default {
       // console.log(event)
       //创建文件读取对象
       if (fileSize <= 10240 * 1024) {
-        if (filetType == "image/png") {
+        if (
+          filetType == "image/png" ||
+          filetType == "image/jpeg" ||
+          filetType == "image/gif"
+        ) {
           this.imgFile = file;
           this.uploading(true, type, scope);
         } else {
@@ -555,7 +533,6 @@ export default {
     },
     getData() {
       this.loading = true;
-      console.log(this.goodsId);
       this.$api.allList().then((res) => {
         console.log(res.data.data);
         this.myOptions2 = res.data.data;
@@ -568,6 +545,10 @@ export default {
         this.myOptions2 = arr;
         console.log(this.myOptions2);
       });
+      if (this.goodsId == " ") {
+        this.sku_image_Flag = false;
+        this.radio_Flag = false;
+      }
       if (this.goodsId) {
         this.$api.imageList(this.goodsId).then((res) => {
           console.log(res.data.data, "imgList");
@@ -576,8 +557,10 @@ export default {
         });
         this.$api.skuList(this.goodsId).then((res) => {
           //获取商品规格列表sku
-          console.log(res);
           console.log(res.data.data, "sku");
+          if (res.data.data.length == 0) {
+            this.radio_Flag = false;
+          }
           this.skuList = res.data.data;
           console.log(this.skuList);
           this.skuStorageArr = [];
@@ -587,80 +570,76 @@ export default {
             this.skuStorageArr.push(ele.storage);
           });
         });
-        this.$api.goodsInfo(this.goodsId).then((res) => {
-          console.log(res.data.data);
-          this.edit = res.data.data;
-          // this.value = this.edit.cat1
-          console.log(this.edit);
-          this.cat1_id = this.edit.cat1_id;
-          this.cat2_id = this.edit.cat2_id;
-          this.cat3_id = this.edit.cat3_id;
-          const arr = [],
-            arr2 = [];
-          const obj = {};
-          obj.label = this.edit.cat1.cat_name;
-          obj.value = this.edit.cat1.cat_id;
-          arr.push(obj);
-          const obj2 = JSON.parse(
-            JSON.stringify(this.edit.cat2)
-              .replace(/cat_name/g, "label")
-              .replace(/cat_id/g, "value")
-          );
-          arr2.push(obj2);
-          obj.children = arr2;
-          this.myOptions = arr;
+        this.$api
+          .goodsInfo(this.goodsId)
+          .then((res) => {
+            console.log(res.data.data);
+            this.edit = res.data.data;
+            // this.value = this.edit.cat1
+            console.log(this.edit);
+            this.cat1_id = this.edit.cat1_id;
+            this.cat2_id = this.edit.cat2_id;
+            this.cat3_id = this.edit.cat3_id;
+            const arr = [],
+              arr2 = [];
+            const obj = {};
+            obj.label = this.edit.cat1.cat_name;
+            obj.value = this.edit.cat1.cat_id;
+            arr.push(obj);
+            const obj2 = JSON.parse(
+              JSON.stringify(this.edit.cat2)
+                .replace(/cat_name/g, "label")
+                .replace(/cat_id/g, "value")
+            );
+            arr2.push(obj2);
+            obj.children = arr2;
+            this.myOptions = arr;
 
-          // this.optionProps = [this.edit.cat1_id,this.edit.cat2_id,this.edit.cat3_id]
-          if (this.edit.cat3) {
-            this.optionProps = [
-              this.edit.cat1_id,
-              this.edit.cat2_id,
-              this.edit.cat3_id,
-            ];
-          } else if (this.edit.cat2) {
-            this.optionProps = [this.edit.cat1_id, this.edit.cat2_id];
-          } else {
-            this.optionProps = [this.edit.cat1_id];
-          }
-          console.log(this.myOptions);
-          console.log(this.value);
-          // this.value = '111122'
+            // this.optionProps = [this.edit.cat1_id,this.edit.cat2_id,this.edit.cat3_id]
+            if (this.edit.cat3) {
+              this.optionProps = [
+                this.edit.cat1_id,
+                this.edit.cat2_id,
+                this.edit.cat3_id,
+              ];
+            } else if (this.edit.cat2) {
+              this.optionProps = [this.edit.cat1_id, this.edit.cat2_id];
+            } else {
+              this.optionProps = [this.edit.cat1_id];
+            }
+            console.log(this.myOptions);
+            console.log(this.value);
+            // this.value = '111122'
 
-          this.goods_name = this.edit.goods_name;
-          this.goods_id = this.edit.goods_id;
-          this.is_on_sale = this.edit.is_on_sale;
-          this.goods_img = this.edit.goods_img;
-          this.content = this.edit.content;
-          this.sort = this.edit.sort;
+            this.goods_name = this.edit.goods_name;
+            this.goods_id = this.edit.goods_id;
+            this.is_on_sale = this.edit.is_on_sale;
+            this.goods_img = this.edit.goods_img;
+            this.content = this.edit.content;
+            this.sort = this.edit.sort;
 
-          // this.skuGoods_img = this.edit
-          // this.cat1_id = this.edit.cat1_id;
-          // this.cat2_id = this.edit.cat2_id;
-          // this.cat3_id = this.edit.cat3_id;
+            // this.skuGoods_img = this.edit
+            // this.cat1_id = this.edit.cat1_id;
+            // this.cat2_id = this.edit.cat2_id;
+            // this.cat3_id = this.edit.cat3_id;
 
-          this.goods_images = this.edit.goods_images;
-          this.loading = false;
-        });
+            this.goods_images = this.edit.goods_images;
+            this.loading = false;
+          })
+          .then(() => {
+            console.log(this.content);
+            this.editor.txt.html(this.content);
+            // this
+          });
       } else {
         console.log("cuowu");
         this.$router.push({ name: "sell" });
       }
-
-      // this.$api.allList().then((res) => {
-      //   console.log(res.data.data);
-      //   this.myOptions2 = res.data.data;
-      //   const arr = JSON.parse(
-      //     JSON.stringify(this.myOptions2)
-      //       .replace(/cat_name/g, "label")
-      //       .replace(/cat_id/g, "value")
-      //       .replace(/child/g, "children")
-      //   );
-      //   this.myOptions2 = arr;
-      //   console.log(this.myOptions2);
-      // });
     },
     // 保存按钮
     preservation() {
+      // console.log(document.getElementsByClassName('w-e-text')[0].innerHTML);
+      this.content = document.getElementsByClassName("w-e-text")[0].innerHTML; //获取富文本里面的内容
       if (!this.cat2_id) {
         this.cat2_id = 0;
         this.cat3_id = 0;
@@ -701,8 +680,7 @@ export default {
       this.edit.cat3_id = this.cat3_id;
     },
     backTo() {
-      // this.$router.push({ name: "sell" });
-      this.$store.commit("pageNum", 1);
+      this.$store.commit("good_pageNum", this.good_pageNum);
       this.$router.go(-1);
     },
     handleClick(tab, event) {
@@ -730,6 +708,15 @@ export default {
 };
 </script>
 <style>
+.shop-form #editor {
+  width: 840px;
+}
+.shop-form #editor .w-e-text-container {
+  height: 740px !important;
+}
+.shop-form #editor img {
+  max-width: 100%;
+}
 .shop-form .displayN {
   display: none;
 }
@@ -833,7 +820,7 @@ export default {
   width: 120px !important;
 }
 .edit-formtwo .title {
-  width: 100%;
+  width: calc(100% - 20px);
   height: 116px;
   /* border: 1px solid; */
   display: flex;

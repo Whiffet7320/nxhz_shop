@@ -132,7 +132,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["sellSearch", "pageNum", "selectValue", "per_page"]),
+    ...mapState(["sellSearch", "good_pageNum", "selectValue", "per_page"]),
   },
   methods: {
     // 库存相关函数
@@ -245,7 +245,7 @@ export default {
           // verify_state:,
         })
         .then((res) => {
-          console.log(res)
+          console.log(res);
           this.$store.commit("goodsList", res.data.data);
           // console.log(res.data.data.data);
           console.log(this.cat1_id, this.cat2_id, this.cat3_id);
@@ -326,6 +326,9 @@ export default {
     // },
   },
   created() {
+    this.myPageNum = this.good_pageNum;
+        console.log(this.myPageNum);
+    this.$store.commit("per_page", 10);
     this.checkedFather = true;
     console.log(this.sellSearch);
     this.mySearch = this.$store.state.sellSearch;
@@ -343,10 +346,10 @@ export default {
         // this.select();
       },
     },
-    "$store.state.pageNum": function () {
+    "$store.state.good_pageNum": function () {
       // console.log(this.$store.state.pageNum)
-      this.myPageNum = this.$store.state.pageNum;
-      console.log(this.myPageNum)
+      this.myPageNum = this.$store.state.good_pageNum;
+      console.log(this.myPageNum);
       this.getData();
       // this.select();
     },
