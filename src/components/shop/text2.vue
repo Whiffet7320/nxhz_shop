@@ -226,6 +226,7 @@ export default {
       .then((res) => {
         console.log(res.data.data);
         this.data = res.data.data;
+        this.$store.commit("changeUser", res.data.data);
       })
       .catch((data) => {
         console.log(data);
@@ -254,22 +255,21 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           alert("修改成功!");
-          this.centerDialogVisible = false;
+          this.changePassword({
+            new_password: this.myUser.newPassword,
+            old_password: this.myUser.oldPassword,
+            confirm_password: this.myUser.newPassword,
+          });
+          setTimeout(() => {
+            sessionStorage.setItem("isLogin", false);
+            this.$router.push({ path: "/" });
+            this.$router.go(0);
+          }, 500);
         } else {
           console.log("error submit!!");
           return false;
         }
       });
-      this.changePassword({
-        new_password: this.myUser.newPassword,
-        old_password: this.myUser.oldPassword,
-        confirm_password: this.myUser.newPassword,
-      });
-      setTimeout(() => {
-        sessionStorage.setItem("isLogin", false);
-        this.$router.push({ path: "/" });
-        this.$router.go(0);
-      }, 500);
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();

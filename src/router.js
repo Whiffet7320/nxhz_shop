@@ -123,11 +123,11 @@ const routes = [
         component: () => import('./components/webSocket/webSocket.vue')
         // component:()=>import('./components/webSocket/ossImage.vue')
     },
-    // {
-    //     path: 'details',
-    //     name: 'details',
-    //     component: () => import('./components/order/details.vue')
-    // },
+    {
+        path: 'EditPassword',//修改个人信息页面
+        name: 'EditPassword',
+        component: () => import('./components/EditPassword.vue')
+    },
 ]
 
 const router = new VueRouter({

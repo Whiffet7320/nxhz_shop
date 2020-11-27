@@ -25,7 +25,7 @@ export default new Vuex.Store({
     good_pageNum: 1,
     examine_pageNum:1,
     pageNum:1,
-    passWord: null,//用户密码
+    // passWord: null,//用户密码
     orderSelect: null,//订单状态
     goodsId: null,//添加编辑的商品
     selectValue: [],//cat_id分类的数组
@@ -36,8 +36,16 @@ export default new Vuex.Store({
     startTime:null,//根据时间筛选（订单页） 开始
     endTime:null,//结束时间
     examine_Verify:null,//examine的verify_state（审核）
+    mobile:null,//账号名
+    passWord:null,//账号密码
   },
   mutations: {
+    mobile(state, str) {
+      state.mobile = str;
+    },
+    passWord(state, str) {
+      state.passWord = str;
+    },
     changeModal(state, boolean) {
       state.showModal = boolean;
     },
@@ -89,9 +97,9 @@ export default new Vuex.Store({
     per_page(state, num) {//每页显示几条数据
       state.per_page = num;
     },
-    passWord(state, num) {//密码
-      state.passWord = num;
-    },
+    // passWord(state, num) {//密码
+    //   state.passWord = num;
+    // },
     orderSelect(state, num) {//订单状态
       state.orderSelect = num;
     },

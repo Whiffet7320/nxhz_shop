@@ -1,10 +1,6 @@
 import axios from 'axios';
 import urls from './url.js';
 
-// const appkey = {
-//     appkey:'cy2ku_1554116083631'
-// }
-
 const myPost = axios.create({
     baseURL: urls.baseUrl,
     method: 'post',
@@ -19,8 +15,8 @@ const myGet = axios.create({
 myPost.interceptors.response.use(response => {
     if (response.status === 200) {
         var myresponse = response
-    } else {
-        console.log('cuowucuowu11')
+    } else if(response.status === 401){
+        sessionStorage.setItem("isLogin", false);
     }
 
     return myresponse
@@ -28,8 +24,8 @@ myPost.interceptors.response.use(response => {
 myGet.interceptors.response.use(response => {
     if (response.status === 200) {
         var myresponse = response
-    } else {
-        console.log('cuowucuowu222')
+    } else if(response.status === 401){
+        sessionStorage.setItem("isLogin", false);
     }
     return myresponse
 })

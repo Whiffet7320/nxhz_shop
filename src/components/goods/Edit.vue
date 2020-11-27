@@ -14,13 +14,6 @@
                 v-model="goods_name"
               ></el-input>
             </el-form-item>
-            <el-form-item label="商品货号 :">
-              <el-input
-                :placeholder="edit.goods_id"
-                v-model="goods_id"
-                :disabled="true"
-              ></el-input>
-            </el-form-item>
             <el-form-item label="商品主图 :" class="myImg">
               <el-image :src="goods_img" v-model="goods_img"> </el-image>
               <div class="button companyButton">
@@ -662,10 +655,20 @@ export default {
       this.$api
         .goodsEdit(myObj)
         .then((res) => {
-          console.log(res.data);
+          if (res.data.status == 1) {
+            console.log(res.data);
+            this.$message({
+              message: "保存成功",
+              type: "success",
+            });
+          } else {
+            this.$message.error(res.data.info);
+          }
         })
         .then(() => {
-          this.$router.push({ name: "sell" });
+          setTimeout(() => {
+            this.$router.push({ name: "sell" });
+          }, 1000);
         });
       // this.getData()
     },
@@ -716,6 +719,9 @@ export default {
 }
 .shop-form #editor img {
   max-width: 100%;
+}
+.shop-form #editor .w-e-toolbar,.shop-form #editor .w-e-text-container{
+  z-index: 0 !important;
 }
 .shop-form .displayN {
   display: none;

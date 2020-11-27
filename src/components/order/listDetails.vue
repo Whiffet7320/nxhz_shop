@@ -18,15 +18,6 @@
             <p class="tit">评论时间：</p>
             <p class="tit">评论图片：</p>
           </div>
-          <!-- <div class="middle-right">
-            <p class="tit">{{ details.date }}</p>
-            <p class="tit">{{ details.name }}</p>
-            <p class="tit">{{ details.address }}</p>
-            <p class="tit">{{ details.date }}</p>
-            <p class="tit">{{ details.name }}</p>
-            <p class="tit">{{ details.address }}</p>
-            <p class="tit">{{ details.date }}</p>
-          </div> -->
           <div class="middle-right">
             <p class="tit">{{ twoarr[0].a }}</p>
             <p class="tit">{{ twoarr[0].b }}</p>
@@ -44,69 +35,6 @@
           </div>
         </div>
       </div>
-      <!-- <div class="bottom">
-        <p class="tit1">订单信息</p>
-        <table>
-          <thead class="top">
-            <tr>
-              <th class="no1">订单号</th>
-              <th class="no2">手机号</th>
-              <th class="no3">商品信息</th>
-              <th class="no4">商家名称</th>
-            </tr>
-          </thead>
-          <tbody class="bottom">
-            <tr v-for="(ele, index) in arr" :key="index">
-              <td>{{ ele.t1 }}</td>
-              <td>{{ ele.t2 }}</td>
-              <td>{{ ele.t3 }}</td>
-              <td>{{ ele.t4 }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div> -->
-      <!-- <div class="footer">
-        <div class="twoBox">
-          <div class="footer-one">
-            <p class="tit active">收货人姓名：</p>
-            <p class="tit">联系电话：</p>
-            <p class="tit">详细地址：</p>
-            <p class="tit">收货人姓名：</p>
-            <p class="tit">联系电话：</p>
-            <p class="tit">详细地址：</p>
-            <p class="tit">收货人姓名：</p>
-          </div>
-          <div class="footer-two">
-            <p class="tit active">{{ twoarr[0].a }}</p>
-            <p class="tit">{{ twoarr[0].b }}</p>
-            <p class="tit">{{ twoarr[0].c }}</p>
-            <p class="tit">{{ twoarr[0].d }}</p>
-            <p class="tit">{{ twoarr[0].e }}</p>
-            <p class="tit">{{ twoarr[0].f }}</p>
-            <p class="tit">{{ twoarr[0].g }}</p>
-          </div>
-          <div class="footer-three">
-            <p class="tit">商品总额：</p>
-            <p class="tit">优惠券/抵扣卷：</p>
-            <p class="tit">支付金额：</p>
-          </div>
-          <div class="footer-four">
-            <p class="tit">{{ twoarr[0].h }}</p>
-            <p class="tit">{{ twoarr[0].i }}</p>
-            <p class="tit">{{ twoarr[0].m }}</p>
-          </div>
-        </div>
-      </div>
-      <div class="below">
-        <div class="below-one">
-          <p class="tit">快递名称：</p>
-          <p class="tit">快递单号：</p>
-        </div>
-        <div class="below-two">
-          <p class="tit">顺丰快递</p>
-          <p class="tit">330303030303011933</p>
-        </div>
-      </div> -->
     </div>
   </div>
 </template>

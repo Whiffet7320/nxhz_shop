@@ -106,6 +106,7 @@ export default {
   methods: {
     submitForm() {
       sessionStorage.setItem("passWord", this.loginForm.password);
+      sessionStorage.setItem("mobile", this.loginForm.username);
       this.$api
         .login({
           mobile: this.loginForm.username,
@@ -114,20 +115,13 @@ export default {
         .then((res) => {
           if (res.status === 200 && res.data.status == 1) {
             // 在 sessionStorage中设置token，值为后台数据中的token
+            console.log(res.data.data);
             sessionStorage.setItem("token", res.data.data.token);
             sessionStorage.setItem("isLogin", true);
-            // sessionStorage.setItem("user", res.data.data);
-            // this.$store.commit("changeFlag", true);
             this.$router.push({ name: "test" });
-            // this.$router.go(0);
             setTimeout(() => {
-              // this.$router.push({ name: "test" });
               this.$router.go(0);
-              // this.$initWebSocket();
             }, 100);
-            // setTimeout(() => {
-            //   this.$initWebSocket();
-            // },1000);
           } else {
             console.log(res.data.info);
             this.$message.error("用户名或者密码错误！");
@@ -139,9 +133,7 @@ export default {
         });
     },
   },
-  mounted() {
-    //
-  },
+  mounted() {},
 };
 </script>
 <style lang="scss">
