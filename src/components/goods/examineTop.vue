@@ -1,5 +1,5 @@
 <template>
-  <div class="sell-contentTop">
+  <div class="examine-contentTop">
     <div class="left">
       <span>审核商品</span>
     </div>
@@ -122,59 +122,68 @@ export default {
 };
 </script>
 <style>
-.sell-contentTop {
+.examine-contentTop {
   display: flex;
   margin-left: 100px;
   margin-bottom: 40px;
 }
-.sell-contentTop .left {
+.examine-contentTop .left {
   margin-top: 26px;
   display: flex;
   /* width: 300px; */
 }
-.sell-contentTop .left span {
+.examine-contentTop .left span {
   font-size: 40px;
   display: block;
   width: 200px;
 }
-.sell-contentTop .right {
+.examine-contentTop .right {
   margin-top: 30px;
   margin-left: 30px;
 }
-.sell-contentTop .right .el-form {
+.examine-contentTop .right .el-form {
   display: flex;
 }
-.sell-contentTop .right .el-form .region {
+.examine-contentTop .right .el-form .region {
   display: flex;
 }
-.sell-contentTop .right .el-form .region .el-form-item__content {
+.examine-contentTop .right .el-form .region .el-form-item__content {
   display: flex;
   /* flex-direction: column; */
 }
-.sell-contentTop .right .el-form .region .el-form-item__content {
+.examine-contentTop .right .el-form .region .el-form-item__content {
   width: 230px;
 }
-.sell-contentTop .right .el-form .search .el-form-item__label {
+.examine-contentTop .right .el-form .search .el-form-item__label {
   width: 62px !important;
 }
-.sell-contentTop .right .el-form .contentTop-btn {
+.examine-contentTop .right .el-form .contentTop-btn {
   margin-left: 20px;
 }
-.sell-contentTop .right .operate-contentTop .right .phone {
+@media screen and (max-width: 1500px) {
+  .examine-contentTop .right .el-form {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .examine-contentTop .right .el-form .contentTop-btn {
+    margin-left: 28px;
+  }
+}
+.examine-contentTop .right .operate-contentTop .right .phone {
   margin-left: 30px;
   display: flex;
   align-items: center;
 }
-.sell-contentTop .right .phone span {
+.examine-contentTop .right .phone span {
   font-size: 14px;
   color: #606266;
   display: block;
   width: 108px;
 }
-.sell-contentTop .right .phone .el-input__inner {
+.examine-contentTop .right .phone .el-input__inner {
   width: 190px;
 }
-.sell-contentTop .toGrant {
+.examine-contentTop .toGrant {
   margin-left: 40px;
 }
 </style>

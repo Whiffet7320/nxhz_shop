@@ -23,7 +23,7 @@ Vue.prototype.$api = api
 
 Vue.prototype.$myAxios = axios
 Vue.prototype.$bus = new Vue()
-Vue.prototype.getlodop = getLodop
+Vue.prototype.$getlodop = getLodop
 // axios.interceptors.request.use(request => {
 //   request.url += '.json'
 //   return request

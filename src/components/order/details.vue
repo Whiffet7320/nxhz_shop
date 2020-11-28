@@ -4,6 +4,7 @@
       <div class="title">
         <p>订单详情页</p>
         <span @click="backTo">返回上一页</span>
+        <el-button @click="print">打印</el-button>
       </div>
       <div class="middle">
         <p class="tit1">收货信息</p>
@@ -83,6 +84,7 @@
           <!-- myOrder.order_express 可能会null -->
           <p class="tit">{{ myOrder.order_express.express_number }}</p>
         </div>
+        "<br><font color='#FF00FF'>打印控件未安装!点击这里<a href='install_lodop32.exe' target='_self'>执行安装</a>,安装后请刷新页面或重新进入。</font>"
       </div>
     </div>
   </div>
@@ -122,6 +124,89 @@ export default {
     });
   },
   methods: {
+    print() {
+      console.log(this.$getlodop)
+      let LODOP = this.$getlodop();
+      console.log(LODOP)
+      LODOP.SET_PRINT_STYLE("FontSize", 18);
+      LODOP.SET_PRINT_STYLE("Bold", 1);
+      // LODOP.ADD_PRINT_TEXT(50, 231, 260, 39, "打印页面部分内容");
+      const body = this.myOrder.order_goods
+        .map((i) => {
+          return (
+            ' <div style="display: flex"><span style="flex: 0 0 50%"><span>' +
+            i.goods_name +
+            '</span> <span style="font-size: 10px">[产品规格:' +
+            i.goods_sku_name +
+            ']</span></span> <span style="flex: 1 1 auto">*' +
+            i.buy_number +
+            '</span><span style="flex: 0 0 20%">' +
+            i.shop_price * i.buy_number +
+            "</span><br/> </div> " +
+            ""
+          );
+        })
+        .join("");
+      const html =
+        "  <div>\n" +
+        '        <div class="title">' +
+        this.myOrder.shop.shop_name +
+        "</div>\n" +
+        "        <span>--------------------------------------------------</span>\n" +
+        "        <!--  商铺地址 -->\n" +
+        "        <div>商铺地址：" +
+        this.myOrder.shop.address +
+        "</div>\n" +
+        "        <div>商铺联系电话：" +
+        this.myOrder.shop.contact_number +
+        "</div>\n" +
+        "        <div> <span>--------------------------------------------------</span></div>\n" +
+        '        <div class="orderTime">下单时间:' +
+        this.formatDate(new Date(this.myOrder.pay_time * 1000)) +
+        "</div>\n" +
+        '        <div class="orderTime">订单编号:' +
+        this.myOrder.order_sn +
+        "</div>\n" +
+        "        <div> <span>--------------------------------------------------</span></div>\n" +
+        body +
+        '        <div style="margin-top: 35px; position: relative; margin-bottom: 20px"><span style="font-size: 10px">合计:</span><span style="position: absolute;right:10px">' +
+        this.myOrder.total_amount +
+        "</span></div>\n" +
+        "        <span>----------------------<span>其他</span>----------------------</span>\n" +
+        "        <!-- 优惠费 -->\n" +
+        '        <div style="font-size: 10px">优惠' +
+        '0.00没有接口' +
+        "元</div>\n" +
+        "        <!--  实际配送费  -->\n" +
+        '        <div style="font-size: 10px">[配送费:' +
+        '无接口' +
+        "元]</div>\n" +
+        "        <!--配送时间-->\n" +
+        "        <!--实际支付-->\n" +
+        '        <div style="font-size: 20px">实付: ￥' +
+        this.myOrder.real_pay_amount +
+        "元</div>\n" +
+        "        <span>--------------------------------------------------</span>\n" +
+        "        <!--收货地址-->\n" +
+        '        <div style="font-size: 15px">收货地址:' +
+        this.myOrder.address +
+        "</div>\n" +
+        "        <!--收货人-->\n" +
+        "        <div>收货人:" +
+        this.myOrder.consignee.substring(0, 1) +
+        "**" +
+        "</div>\n" +
+        "        <!-- 联系电话 -->\n" +
+        "        <div>联系电话:" +
+        this.myOrder.mobile.substring(0, 3) +
+        "****" +
+        this.myOrder.mobile.substring(7, 12) +
+        "</div>\n" +
+        "        <span>--------------------------------------------------</span>\n" +
+        "      </div>";
+      LODOP.ADD_PRINT_HTM(0, 0, "100%", "100%", html);
+      LODOP.PRINT();
+    },
     formatDate(now) {
       var year = now.getFullYear(); //取得4位数的年份
       var month = now.getMonth() + 1; //取得日期中的月份，其中0表示1月，11表示12月

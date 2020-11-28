@@ -8,7 +8,7 @@
         :model="ruleForm"
         ref="ruleForm"
         label-width="100px"
-        class="demo-ruleForm demo-form-inline contentTop-form"
+        class="demo-ruleForm contentTop-form"
         :inline="true"
       >
         <!-- <div class="inline-box"> -->
@@ -176,6 +176,15 @@ export default {
 }
 .sell-contentTop .right .el-form .contentTop-btn {
   margin-left: 20px;
+}
+@media screen and (max-width: 1500px) {
+  .sell-contentTop .right .el-form {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .sell-contentTop .right .el-form .contentTop-btn {
+    margin-left: 54px;
+  }
 }
 .sell-contentTop .right .operate-contentTop .right .phone {
   margin-left: 30px;

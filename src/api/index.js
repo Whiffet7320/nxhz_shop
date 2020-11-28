@@ -13,19 +13,29 @@ const myGet = axios.create({
     method: 'get',
 })
 myPost.interceptors.response.use(response => {
+    console.log(response)
     if (response.status === 200) {
         var myresponse = response
-    } else if(response.status === 401){
+    } else if (response.status === 401) {
         sessionStorage.setItem("isLogin", false);
+        console.log(sessionStorage.getItem("isLogin"));
+    } else if (response.status === 500) {
+        sessionStorage.setItem("isLogin", false);
+        console.log(sessionStorage.getItem("isLogin"));
     }
 
     return myresponse
 })
 myGet.interceptors.response.use(response => {
+    console.log(response)
     if (response.status === 200) {
         var myresponse = response
-    } else if(response.status === 401){
+    } else if (response.status === 401) {
         sessionStorage.setItem("isLogin", false);
+        console.log(sessionStorage.getItem("isLogin"));
+    } else if (response.status === 500) {
+        sessionStorage.setItem("isLogin", false);
+        console.log(sessionStorage.getItem("isLogin"));
     }
     return myresponse
 })
@@ -252,7 +262,7 @@ export default {
             },
         })
     },
-    imageChange(obj){//添加 删除图片
+    imageChange(obj) {//添加 删除图片
         return myPost({
             url: urls.imageChange,
             params: {

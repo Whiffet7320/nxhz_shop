@@ -51,7 +51,7 @@
         </el-row>
       </div>
 
-      <div class="leftContent">
+      <div class="leftContent" v-loading="loading">
         <div class="wxchatBorderRightTop">
           <div style="float: right; padding: 5px" class="close">
             <i class="el-icon-close" style="font-size: 10px"></i>
@@ -209,6 +209,7 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
+      loading:false,
       mysrcList: [
         "https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg",
         "https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg",
@@ -246,8 +247,10 @@ export default {
   },
   created() {
     this.isDotList = this.isDotNum;
+    console.log(this.client_id)
     this.$api.bindShop(this.client_id).then((res) => {
       //绑定client_id到shop_id
+      console.log(res)
       console.log(res.data.info);
       this.getLeftUserList();
     });
@@ -420,11 +423,13 @@ export default {
         .then(() => {
           setTimeout(() => {
             this.scrollBottm();
+            this.loading = false
           }, 200);
         });
     },
     userClick(ele, index) {
       // 点击左侧用户列表
+      this.loading = true
       this.webFlag = false;
       console.log(ele, index);
       // this.isDotList[index] = "";

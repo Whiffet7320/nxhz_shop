@@ -23,8 +23,30 @@ export default {
       list: null,
     };
   },
+  methods: {
+    getMatched() {
+      this.list = this.$route.matched;
+      if (this.$route.path == "/goods/sell") {
+        this.list[0].meta = [
+          { title: "商品管理", url: "/goods/sell" },
+          { title: "商品列表", url: "/goods/sell" },
+        ];
+      } else if (this.$route.path == "/goods/Edit") {
+        this.list[0].meta = [
+          { title: "商品管理", url: "/goods/sell" },
+          { title: "商品列表", url: "/goods/sell" },
+          { title: "商品详情页", url: "/goods/Edit" },
+        ];
+      } else if (this.$route.path == "/goods/examine") {
+        this.list[0].meta = [
+          { title: "商品管理", url: "/goods/examine" },
+          { title: "审核商品", url: "/goods/examine" },
+        ];
+      }
+    },
+  },
   created() {
-    this.list = this.$route.matched;
+    this.getMatched()
   },
   watch: {
     $route(to, from) {

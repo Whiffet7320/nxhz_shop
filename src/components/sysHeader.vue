@@ -38,13 +38,6 @@ export default {
     this.getData();
   },
   methods: {
-    signOut() {
-      // this.$store.commit('changeFlag',false)
-      sessionStorage.setItem("isLogin", false);
-      console.log(sessionStorage.getItem("isLogin"));
-      this.$router.push({ path: "/" });
-      this.$router.go(0);
-    },
     getData() {
       this.passWord = sessionStorage.getItem("passWord");
       this.mobile = sessionStorage.getItem("mobile");

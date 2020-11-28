@@ -269,11 +269,11 @@ export default {
   .content {
     width: 100%;
     .title {
-      width: 100%;
+      width: calc(100% - 20px);
       height: 80px;
       /* border: 1px solid; */
       display: flex;
-      padding-left: 20px;
+      transform: translateX(20px);
     }
     .title p {
       font-size: 40px;
