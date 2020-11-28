@@ -5,6 +5,7 @@
         <p>订单详情页</p>
         <span @click="backTo">返回上一页</span>
         <el-button @click="print">打印</el-button>
+        <!-- <br><font color='#FF00FF'>打印控件未安装!点击这里<a href='install_lodop32.exe' target='_self'>执行安装</a>,安装后请刷新页面或重新进入。</font> -->
       </div>
       <div class="middle">
         <p class="tit1">收货信息</p>
@@ -84,7 +85,6 @@
           <!-- myOrder.order_express 可能会null -->
           <p class="tit">{{ myOrder.order_express.express_number }}</p>
         </div>
-        "<br><font color='#FF00FF'>打印控件未安装!点击这里<a href='install_lodop32.exe' target='_self'>执行安装</a>,安装后请刷新页面或重新进入。</font>"
       </div>
     </div>
   </div>

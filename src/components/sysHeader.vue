@@ -39,17 +39,30 @@ export default {
   },
   methods: {
     getData() {
-      this.passWord = sessionStorage.getItem("passWord");
-      this.mobile = sessionStorage.getItem("mobile");
-      console.log(this.passWord, this.mobile);
+      // this.passWord = sessionStorage.getItem("passWord");
+      // this.mobile = sessionStorage.getItem("mobile");
+      // console.log(this.passWord, this.mobile);
+      // this.$api
+      //   .login({
+      //     mobile: this.mobile,
+      //     password: this.passWord,
+      //   })
+      //   .then((res) => {
+      //     console.log(res);
+      //     this.user = res.data.data;
+      //   });
       this.$api
-        .login({
-          mobile: this.mobile,
-          password: this.passWord,
-        })
+        .info()
         .then((res) => {
-          console.log(res);
+          console.log(res.data.data);
           this.user = res.data.data;
+          this.$store.commit("changeUser", res.data.data);
+        })
+        .catch((data) => {
+          console.log(data);
+        })
+        .then(() => {
+          this.loading = false;
         });
     },
     editPassword(command) {

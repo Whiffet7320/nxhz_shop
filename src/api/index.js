@@ -1,44 +1,132 @@
 import axios from 'axios';
+import router from '../router.js';
 import urls from './url.js';
 
-const myPost = axios.create({
+let myPost = axios.create({
     baseURL: urls.baseUrl,
     method: 'post',
     headers: {
         'token': sessionStorage.getItem("token")
     },
 })
-const myGet = axios.create({
+let myGet = axios.create({
     baseURL: urls.baseUrl,
     method: 'get',
+})
+// myGet.interceptors.request.use(/*这是拦截器设置tokne*/
+//     config => {
+//         let token = localStorage.getItem("token");
+
+//         if (token) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
+//             config.headers.token = `${token}`;
+//         }
+//         return config;
+//     },
+//     err => {
+//         alert(err)
+//         return Promise.reject(err);
+//     });
+// myGet.interceptors.response.use(
+//     response => {/*在这里可以设置请求成功的一些设置*/
+//         let newToken = response.config.headers.token
+//         localStorage.setItem('token', newToken);
+//         if (response.data.code == -1 && response.status == 200) {
+//             this.$message({ showClose: true, message: response.data.msg, type: 'warning' });
+//         }
+//         return response;
+//     },
+//     error => {/*在这里设置token过期的跳转*/
+//         if (error.response) {
+//             if (error.response.data.code == 401) {
+//                 router.push('/login');
+//             }
+//         }
+//     });
+// myPost.interceptors.request.use(/*这是拦截器设置tokne*/
+//     config => {
+//         let token = localStorage.getItem("token");
+
+//         if (token) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
+//             config.headers.token = `${token}`;
+//         }
+//         return config;
+//     },
+//     err => {
+//         alert(err)
+//         return Promise.reject(err);
+//     });
+// myPost.interceptors.response.use(
+//     response => {/*在这里可以设置请求成功的一些设置*/
+//         let newToken = response.config.headers.token
+//         localStorage.setItem('token', newToken);
+//         if (response.data.code == -1 && response.status == 200) {
+//             this.$message({ showClose: true, message: response.data.msg, type: 'warning' });
+//         }
+//         return response;
+//     },
+//     error => {/*在这里设置token过期的跳转*/
+//         if (error.response) {
+//             if (error.response.data.code == 401) {
+//                 router.push('/login');
+//             }
+//         }
+//     });
+
+myPost.interceptors.request.use(function (config) { // 每次请求时会从localStorage中获取token
+    let token = sessionStorage.getItem("token")
+    console.log(token)
+    if (token) {
+        token = 'bearer' + ' ' + token.replace(/'|"/g, '') // 把token加入到默认请求参数中
+        config.headers.common['Authorization'] = token
+    }
+    return config
+}, function (error) {
+    return Promise.reject(error)
+})
+myGet.interceptors.request.use(function (config) { // 每次请求时会从localStorage中获取token
+    let token = sessionStorage.getItem("token")
+    console.log(token)
+    if (token) {
+        token = 'bearer' + ' ' + token.replace(/'|"/g, '') // 把token加入到默认请求参数中
+        config.headers.common['Authorization'] = token
+    }
+    return config
+}, function (error) {
+    return Promise.reject(error)
 })
 myPost.interceptors.response.use(response => {
     console.log(response)
     if (response.status === 200) {
+        // sessionStorage.setItem("isLogin", false);
+        console.log(sessionStorage.getItem("isLogin"));
         var myresponse = response
-    } else if (response.status === 401) {
-        sessionStorage.setItem("isLogin", false);
-        console.log(sessionStorage.getItem("isLogin"));
-    } else if (response.status === 500) {
-        sessionStorage.setItem("isLogin", false);
-        console.log(sessionStorage.getItem("isLogin"));
     }
-
     return myresponse
-})
+}), (error) => {
+    console.log(error.response.status)
+    return Promise.reject(error)
+}
 myGet.interceptors.response.use(response => {
     console.log(response)
     if (response.status === 200) {
+        // sessionStorage.setItem("isLogin", false);
+        console.log(sessionStorage.getItem("isLogin"));
         var myresponse = response
-    } else if (response.status === 401) {
+    }
+    else if (response.status === 401) {
         sessionStorage.setItem("isLogin", false);
         console.log(sessionStorage.getItem("isLogin"));
+        router.push({ path: "/" })
+        router.go(0)
     } else if (response.status === 500) {
-        sessionStorage.setItem("isLogin", false);
+        // sessionStorage.setItem("isLogin", false);
         console.log(sessionStorage.getItem("isLogin"));
     }
     return myresponse
-})
+}), (error) => {
+    console.log(error.response.status)
+    return Promise.reject(error)
+}
 export default {
     login(obj) {
         return myPost({

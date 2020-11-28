@@ -85,11 +85,10 @@
                           class="img_cyy"
                           v-if="ele.type == 1"
                           @click="imgClick"
-                        >
+                        />
                         <p v-else>{{ ele.content }}</p>
                       </viewer>
-                      </span
-                    >
+                    </span>
                   </div>
                 </el-col>
 
@@ -126,7 +125,7 @@
                           class="img_cyy"
                           v-if="ele.type == 1"
                           @click="imgClick"
-                        >
+                        />
                         <p v-else>{{ ele.content }}</p>
                       </viewer>
                     </span>
@@ -209,7 +208,7 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
-      loading:false,
+      loading: false,
       mysrcList: [
         "https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg",
         "https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg",
@@ -243,14 +242,14 @@ export default {
     };
   },
   computed: {
-    ...mapState(["client_id", "isDotNum"]),
+    ...mapState(["client_id", "isDotNum", "sayObj"]),
   },
   created() {
     this.isDotList = this.isDotNum;
-    console.log(this.client_id)
+    console.log(this.client_id);
     this.$api.bindShop(this.client_id).then((res) => {
       //绑定client_id到shop_id
-      console.log(res)
+      console.log(res);
       console.log(res.data.info);
       this.getLeftUserList();
     });
@@ -262,7 +261,8 @@ export default {
   watch: {
     "$store.state.isDotNum": function () {
       this.isDotList = this.$store.state.isDotNum;
-      // this.userHistory();
+      console.log(this.sayObj);
+      this.userHistory()
       setTimeout(() => {
         console.log(1111221111);
         this.getLeftUserList();
@@ -301,7 +301,11 @@ export default {
       //创建文件读取对象
       if (fileSize <= 10240 * 1024) {
         console.log(filetType);
-        if (filetType == "image/png" || filetType == "image/jpeg" || filetType == "image/gif") {
+        if (
+          filetType == "image/png" ||
+          filetType == "image/jpeg" ||
+          filetType == "image/gif"
+        ) {
           this.imgFile = file;
           this.uploading(true);
         } else {
@@ -423,13 +427,13 @@ export default {
         .then(() => {
           setTimeout(() => {
             this.scrollBottm();
-            this.loading = false
+            this.loading = false;
           }, 200);
         });
     },
     userClick(ele, index) {
       // 点击左侧用户列表
-      this.loading = true
+      this.loading = true;
       this.webFlag = false;
       console.log(ele, index);
       // this.isDotList[index] = "";
@@ -632,7 +636,7 @@ export default {
 };
 </script>
 <style>
-.websocket .img_cyy{
+.websocket .img_cyy {
   display: inline-block;
   height: auto;
   max-width: 100%;

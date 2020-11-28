@@ -38,8 +38,12 @@ export default new Vuex.Store({
     examine_Verify:null,//examine的verify_state（审核）
     mobile:null,//账号名
     passWord:null,//账号密码
+    sayObj:null,//say过来后的数据
   },
   mutations: {
+    sayObj(state, obj) {
+      state.sayObj = obj;
+    },
     mobile(state, str) {
       state.mobile = str;
     },
