@@ -96,8 +96,9 @@ export default {
   created() {
     this.phoneInput = this.order_testContent_search;
     if (this.startTime && this.endTime) {
-      this.ruleForm.date1 = new Date(this.startTime).getTime();
-      this.ruleForm.date2 = new Date(this.endTime).getTime();
+      this.ruleForm.date1 = this.startTime;
+      this.ruleForm.date2 = this.endTime;
+      this.timeChange()
     }
   },
   methods: {
