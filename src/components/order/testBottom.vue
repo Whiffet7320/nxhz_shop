@@ -204,11 +204,21 @@ export default {
         default:
           break;
       }
+      this.orderChangeObj.express_number = this.shippingNum;
       console.log(this.orderChangeObj);
       this.$api
         .orderChange(this.orderChangeObj)
         .then((res) => {
           console.log(res);
+          if (res.data.status == 0) {
+            this.$message.error(res.data.info);
+            return;
+          } else {
+            this.$message({
+              message: "发货成功",
+              type: "success",
+            });
+          }
         })
         .then(() => {
           this.getData();
@@ -217,6 +227,7 @@ export default {
     },
     deliverGoods(scope, type) {
       //发货
+      this.shippingNum = "";
       if (type == "str") {
         console.log(scope);
       } else if (type == "obj") {
@@ -226,9 +237,9 @@ export default {
           option: "express",
           shipping_id: "",
           shipping_name: "123",
-          express_number: scope.row.order_sn,
+          express_number: this.shippingNum,
         };
-        this.shippingNum = scope.row.order_sn.toString();
+        // this.shippingNum = scope.row.order_sn.toString();
         this.cyy = scope.row.fahuo; //发货的快递公司
         this.dialogFormVisible = true;
       }
@@ -239,6 +250,7 @@ export default {
     handleClick(row) {
       console.log(row);
       this.$store.commit("changeDetails", row);
+      this.$store.commit("todetailsFlag", true);
       this.$router.push({ name: "details" });
     },
     getData() {
@@ -267,9 +279,9 @@ export default {
         this.$store.commit("order_total", this.total);
         this.orderList.forEach((ele) => {
           ele.user = `    <img class="ava"
-      style="width: 70px; height: 70px"
+      style="width: 50px; height: 50px"
       src="${ele.head_pic}"
-      :fit="fit"></img><div>${ele.user_id}<br/>${ele.nick_name}<br/>${ele.mobile}</div>`;
+      :fit="fit"></img><div style="font-size: 12px;line-height: 17px;">${ele.user_id}<br/>${ele.nick_name}<br/>${ele.mobile}</div>`;
 
           this.orderList.forEach((ele) => {
             // console.log(ele.order_goods)
@@ -349,6 +361,7 @@ export default {
       this.getData();
     },
     "$store.state.startTime": function () {
+      console.log(1234444)
       // this.myOrderSelect = this.$store.state.orderSelect;
       // console.log('xiugaile')
       this.getData();
@@ -374,6 +387,6 @@ export default {
   /* width: 120px !important; */
 }
 .testBottomDialog .el-dialog {
-  width: 450px;
+  width: 450px !important;
 }
 </style>

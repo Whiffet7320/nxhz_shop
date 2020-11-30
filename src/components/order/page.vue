@@ -49,7 +49,7 @@ export default {
     this.getTotal();
   },
   watch: {
-    "$store.state.total": function () {
+    "$store.state.order_total": function () {
       this.getTotal();
     },
     "$store.state.pageNum": {

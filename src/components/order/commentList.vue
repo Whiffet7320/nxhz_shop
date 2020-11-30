@@ -1,21 +1,28 @@
 <template>
   <div class="commentList">
-    <Content-top />
-    <Content-botton />
+    <div v-if="!tolistDetailsFlag">
+      <Content-top />
+      <Content-botton />
+    </div>
+        <router-view v-else />
   </div>
 </template>
 <script>
-import ContentTop from './listTop'
-import ContentBotton from './listBottom'
+import { mapState } from "vuex";
+import ContentTop from "./listTop";
+import ContentBotton from "./listBottom";
 export default {
-  components:{
+  components: {
     ContentTop,
-    ContentBotton
-  }
-}
+    ContentBotton,
+  },
+    computed: {
+    ...mapState(["tolistDetailsFlag"]),
+  },
+};
 </script>
 <style>
-.commentList{
+.commentList {
   position: relative;
   height: 100%;
 }

@@ -58,9 +58,9 @@ export default {
           this.user = res.data.data;
           this.$store.commit("changeUser", res.data.data);
         })
-        .catch((data) => {
-          console.log(data);
-        })
+        // .catch((data) => {
+        //   console.log(data);
+        // })
         .then(() => {
           this.loading = false;
         });

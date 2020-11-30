@@ -78,7 +78,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["examine_Verify"]),
+    ...mapState(["examine_Verify","examine_search"]),
   },
   methods: {
     onSubmit() {
@@ -99,11 +99,13 @@ export default {
       this.$store.commit("goodsId", " ");
       this.$store.commit("edit", { sort: "0" });
       this.$store.commit("examine_pageNum", 1);
+      this.$store.commit("toEditFlag", true);
       this.$router.push({ name: "Edit" });
     },
   },
   created() {
     // if(this.examine_Verify)
+    this.search = this.examine_search
     this.opValue = this.examine_Verify;
     console.log(this.examine_Verify, ",", this.opValue);
     // if(this.examine_Verify == 0){

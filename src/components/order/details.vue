@@ -3,8 +3,8 @@
     <div class="details">
       <div class="title">
         <p>订单详情页</p>
-        <span @click="backTo">返回上一页</span>
-        <el-button @click="print">打印</el-button>
+        <span class="backTo" @click="backTo">返回上一页</span>
+        <el-button @click="print" class="print">打印</el-button>
         <!-- <br><font color='#FF00FF'>打印控件未安装!点击这里<a href='install_lodop32.exe' target='_self'>执行安装</a>,安装后请刷新页面或重新进入。</font> -->
       </div>
       <div class="middle">
@@ -107,27 +107,33 @@ export default {
   },
   created() {
     // console.log(this.details.);
-    this.$api.orderInfo(this.details.order_id).then((res) => {
-      console.log(res.data.data);
-      this.myOrder = res.data.data;
-      this.myOrder.add_time = this.formatDate(new Date(res.data.data.add_time));
+    if (this.details.order_id) {
+      this.$api.orderInfo(this.details.order_id).then((res) => {
+        console.log(res.data.data);
+        this.myOrder = res.data.data;
+        this.myOrder.add_time = this.formatDate(
+          new Date(res.data.data.add_time)
+        );
 
-      if (this.myOrder.user_pay_type == 0) {
-        this.myOrder.myUserPayType = "未知";
-      } else if (this.myOrder.user_pay_type == 1) {
-        this.myOrder.myUserPayType = "支付宝";
-      } else if (this.myOrder.user_pay_type == 2) {
-        this.myOrder.myUserPayType = "微信";
-      } else if (this.myOrder.user_pay_type == 3) {
-        this.myOrder.myUserPayType = "余额";
-      }
-    });
+        if (this.myOrder.user_pay_type == 0) {
+          this.myOrder.myUserPayType = "未知";
+        } else if (this.myOrder.user_pay_type == 1) {
+          this.myOrder.myUserPayType = "支付宝";
+        } else if (this.myOrder.user_pay_type == 2) {
+          this.myOrder.myUserPayType = "微信";
+        } else if (this.myOrder.user_pay_type == 3) {
+          this.myOrder.myUserPayType = "余额";
+        }
+      });
+    } else {
+      this.$router.push({name:'testContent'})
+    }
   },
   methods: {
     print() {
-      console.log(this.$getlodop)
+      console.log(this.$getlodop);
       let LODOP = this.$getlodop();
-      console.log(LODOP)
+      console.log(LODOP);
       LODOP.SET_PRINT_STYLE("FontSize", 18);
       LODOP.SET_PRINT_STYLE("Bold", 1);
       // LODOP.ADD_PRINT_TEXT(50, 231, 260, 39, "打印页面部分内容");
@@ -175,11 +181,11 @@ export default {
         "        <span>----------------------<span>其他</span>----------------------</span>\n" +
         "        <!-- 优惠费 -->\n" +
         '        <div style="font-size: 10px">优惠' +
-        '0.00没有接口' +
+        "0.00没有接口" +
         "元</div>\n" +
         "        <!--  实际配送费  -->\n" +
         '        <div style="font-size: 10px">[配送费:' +
-        '无接口' +
+        "无接口" +
         "元]</div>\n" +
         "        <!--配送时间-->\n" +
         "        <!--实际支付-->\n" +
@@ -237,7 +243,12 @@ export default {
   },
 };
 </script>
-<style scoped>
+<style>
+.details .title .print{
+  margin-left: 30px;
+  margin-top: 10px;
+  height: 40px !important;
+}
 .details-header {
   min-height: 100%;
   /* height: 100%; */
@@ -297,7 +308,7 @@ export default {
   margin-right: 54px;
   margin-left: 20px;
 }
-.details .title span {
+.details .title .backTo {
   font-size: 14px;
   color: #74c853;
   margin-top: 18px;

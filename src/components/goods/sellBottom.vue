@@ -48,7 +48,8 @@
                   </div>
                 </template>
               </el-table-column>
-
+              <el-table-column prop="myVerify" label="审核状态">
+              </el-table-column>
               <el-table-column width="200" label="是否上架">
                 <template slot-scope="scope">
                   <!-- <input type="text" v-model="scope.row.checkedFather" /> -->
@@ -91,6 +92,7 @@
       <el-table-column prop="catName" label="分类"> </el-table-column>
       <el-table-column prop="address3" label="销售价"> </el-table-column>
       <el-table-column prop="address3" label="库存"> </el-table-column>
+      <el-table-column prop="myVerify" label="审核状态"> </el-table-column>
       <el-table-column width="200" label="是否上架">
         <template slot-scope="scope">
           <!-- <input type="text" v-model="scope.row.checkedFather" /> -->
@@ -129,6 +131,8 @@ export default {
       cat3_id: "",
       mySelectValue: "",
       limit: null,
+      myVerify: null,
+      mySys_on_sale: null,
     };
   },
   computed: {
@@ -211,6 +215,7 @@ export default {
       this.$store.commit("edit", row);
       this.$store.commit("goodsId", row.goods_id);
       this.$store.commit("nameSort", { nameF: "first", nameS: "second" });
+      this.$store.commit("toEditFlag", true);
       this.$router.push({ name: "Edit" });
     },
     handleClickEdit(row) {
@@ -218,6 +223,7 @@ export default {
       this.$store.commit("edit", row);
       this.$store.commit("goodsId", row.goods_id);
       this.$store.commit("nameSort", { nameF: "second", nameS: "first" });
+      this.$store.commit("toEditFlag", true);
       this.$router.push({ name: "Edit" });
     },
     toggleSelection(rows) {
@@ -284,6 +290,18 @@ export default {
           this.myTableData = this.tableData;
           console.log(this.myTableData);
           this.myTableData.forEach((ele) => {
+            if (ele.verify_state == 0) {
+              ele.myVerify = "待审核";
+            } else if (ele.verify_state == 1) {
+              ele.myVerify = "审核未通过";
+            } else if (ele.verify_state == 2) {
+              ele.myVerify = "审核通过";
+            }
+            if (ele.sys_on_sale == 0) {
+              ele.mySys_on_sale = "下架";
+            } else if (ele.sys_on_sale == 1) {
+              ele.mySys_on_sale = "正常";
+            }
             // console.log(ele)
             if (!ele.cat1) {
               ele.catName = "";
@@ -327,7 +345,7 @@ export default {
   },
   created() {
     this.myPageNum = this.good_pageNum;
-        console.log(this.myPageNum);
+    console.log(this.myPageNum);
     this.$store.commit("per_page", 10);
     this.checkedFather = true;
     console.log(this.sellSearch);

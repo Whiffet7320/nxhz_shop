@@ -24,17 +24,21 @@ const routes = [
     {
         path: '/goods',
         name: 'goods',
+        redirect: 'goods/sell',
         component: () => import('./components/goods/index.vue'),
         children: [
             {
                 path: 'sell',
                 name: 'sell',
-                component: () => import('./components/goods/sell.vue')
-            },
-            {
-                path: 'Edit',
-                name: 'Edit',
-                component: () => import('./components/goods/Edit.vue')
+                component: () => import('./components/goods/sell.vue'),
+                children: [
+                    {
+                        path: 'Edit',
+                        name: 'Edit',
+                        // redirect: 'goods/sell',
+                        component: () => import('./components/goods/Edit.vue')
+                    },
+                ]
             },
             {
                 path: 'examine',
@@ -51,34 +55,42 @@ const routes = [
         meta: [
             { title: '订单管理', url: '/order/testContent', flag: true },
             { title: '订单列表', url: '/order/testContent', flag: true },
-            // {title:'订单',url:'/order/details',flag:true},
-            // {title:'评论列表',url:'/order/commentList',flag:true}
         ],
         children: [
             {
                 path: 'testContent',
                 name: 'testContent',
-                component: () => import('./components/order/testContent.vue')
+                component: () => import('./components/order/testContent.vue'),
+                children: [
+                    {
+                        path: 'details',
+                        name: 'details',
+                        component: () => import('./components/order/details.vue'),
+                    },
+                ]
             },
-            {
-                path: 'details',
-                name: 'details',
-                component: () => import('./components/order/details.vue'),
-                // beforeEnter(to, from, next) {
-                //     console.log(to, from)
-                //     next()
-                // },
-            },
+            // {
+            //     path: 'details',
+            //     name: 'details',
+            //     component: () => import('./components/order/details.vue'),
+            // },
             {
                 path: 'commentList',
                 name: 'commentList',
-                component: () => import('./components/order/commentList.vue')
+                component: () => import('./components/order/commentList.vue'),
+                children: [
+                    {
+                        path: 'listDetails',
+                        name: 'listDetails',
+                        component: () => import('./components/order/listDetails.vue')
+                    },
+                ]
             },
-            {
-                path: 'listDetails',
-                name: 'listDetails',
-                component: () => import('./components/order/listDetails.vue')
-            }
+            // {
+            //     path: 'listDetails',
+            //     name: 'listDetails',
+            //     component: () => import('./components/order/listDetails.vue')
+            // }
         ]
     },
     {

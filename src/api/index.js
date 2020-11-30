@@ -5,9 +5,6 @@ import urls from './url.js';
 let myPost = axios.create({
     baseURL: urls.baseUrl,
     method: 'post',
-    headers: {
-        'token': sessionStorage.getItem("token")
-    },
 })
 let myGet = axios.create({
     baseURL: urls.baseUrl,
@@ -72,61 +69,128 @@ let myGet = axios.create({
 //         }
 //     });
 
-myPost.interceptors.request.use(function (config) { // 每次请求时会从localStorage中获取token
-    let token = sessionStorage.getItem("token")
-    console.log(token)
-    if (token) {
-        token = 'bearer' + ' ' + token.replace(/'|"/g, '') // 把token加入到默认请求参数中
-        config.headers.common['Authorization'] = token
+// myPost.interceptors.request.use(function (config) { // 每次请求时会从localStorage中获取token
+//     let token = sessionStorage.getItem("token")
+//     console.log(token)
+//     if (token) {
+//         token = 'bearer' + ' ' + token.replace(/'|"/g, '') // 把token加入到默认请求参数中
+//         config.headers.common['Authorization'] = token
+//     }
+//     console.log(token)
+//     return config
+// }, function (error) {
+//     return Promise.reject(error)
+// })
+// myGet.interceptors.request.use(function (config) { // 每次请求时会从localStorage中获取token
+//     let token = sessionStorage.getItem("token")
+//     console.log(token)
+//     if (token) {
+//         token = 'bearer' + ' ' + token.replace(/'|"/g, '') // 把token加入到默认请求参数中
+//         config.headers.common['Authorization'] = token
+//     }
+//     return config
+// }, function (error) {
+//     return Promise.reject(error)
+// })
+myPost.interceptors.request.use(config => {
+    if (sessionStorage.getItem("token")) {
+        config.headers.token = sessionStorage.token
     }
-    return config
-}, function (error) {
-    return Promise.reject(error)
+    console.log(config)
+    return config;
+}, error => {
+    console.log(error);
+    return Promise.reject();
 })
-myGet.interceptors.request.use(function (config) { // 每次请求时会从localStorage中获取token
-    let token = sessionStorage.getItem("token")
-    console.log(token)
-    if (token) {
-        token = 'bearer' + ' ' + token.replace(/'|"/g, '') // 把token加入到默认请求参数中
-        config.headers.common['Authorization'] = token
+myGet.interceptors.request.use(config => {
+    if (sessionStorage.getItem("token")) {
+        config.headers.token = sessionStorage.token
     }
-    return config
-}, function (error) {
-    return Promise.reject(error)
+    console.log(config)
+    return config;
+}, error => {
+    console.log(error);
+    return Promise.reject();
 })
 myPost.interceptors.response.use(response => {
-    console.log(response)
     if (response.status === 200) {
-        // sessionStorage.setItem("isLogin", false);
-        console.log(sessionStorage.getItem("isLogin"));
-        var myresponse = response
+        return response;
+    } else {
+        Promise.reject();
     }
-    return myresponse
-}), (error) => {
-    console.log(error.response.status)
-    return Promise.reject(error)
-}
-myGet.interceptors.response.use(response => {
-    console.log(response)
-    if (response.status === 200) {
-        // sessionStorage.setItem("isLogin", false);
-        console.log(sessionStorage.getItem("isLogin"));
-        var myresponse = response
-    }
-    else if (response.status === 401) {
+}, error => {
+    //错误跳转
+    if (error.response.status === 500) {
+        console.log(error.response.data.info)
+    } else if (error.response.status === 401) {
         sessionStorage.setItem("isLogin", false);
         console.log(sessionStorage.getItem("isLogin"));
         router.push({ path: "/" })
         router.go(0)
-    } else if (response.status === 500) {
-        // sessionStorage.setItem("isLogin", false);
-        console.log(sessionStorage.getItem("isLogin"));
+        return Promise.reject();
     }
-    return myresponse
-}), (error) => {
-    console.log(error.response.status)
-    return Promise.reject(error)
-}
+})
+myGet.interceptors.response.use(response => {
+    if (response.status === 200) {
+        return response;
+    } else {
+        Promise.reject();
+    }
+}, error => {
+    //错误跳转
+    if (error.response.status === 500) {
+        console.log(error.response.data.info)
+    } else if (error.response.status === 401) {
+        sessionStorage.setItem("isLogin", false);
+        console.log(sessionStorage.getItem("isLogin"));
+        router.push({ path: "/" })
+        router.go(0)
+        return Promise.reject();
+    }
+})
+
+
+// myPost.interceptors.response.use(response => {
+//     console.log(response)
+//     if (response.status === 200) {
+//         // sessionStorage.setItem("isLogin", false);
+//         console.log(sessionStorage.getItem("isLogin"));
+//         var myresponse = response
+//     } else if (response.status === 401) {
+//         sessionStorage.setItem("isLogin", false);
+//         console.log(sessionStorage.getItem("isLogin"));
+//         router.push({ path: "/" })
+//         router.go(0)
+//     }
+//     return myresponse
+// }),
+//     (error) => {
+//         console.log(error)
+//         console.log(error.response.status)
+//         return Promise.reject(error)
+//     }
+// myGet.interceptors.response.use(response => {
+//     console.log(response)
+//     if (response.status === 200) {
+//         // sessionStorage.setItem("isLogin", false);
+//         console.log(sessionStorage.getItem("isLogin"));
+//         var myresponse = response
+//     }
+//     else if (response.status === 401) {
+//         sessionStorage.setItem("isLogin", false);
+//         console.log(sessionStorage.getItem("isLogin"));
+//         router.push({ path: "/" })
+//         router.go(0)
+//     } else if (response.status === 500) {
+//         // sessionStorage.setItem("isLogin", false);
+//         console.log(sessionStorage.getItem("isLogin"));
+//     }
+//     return myresponse
+// }), (error) => {
+//     console.log(error)
+//     console.log(error.response.status)
+//     return Promise.reject(error)
+// }
 export default {
     login(obj) {
         return myPost({
@@ -135,17 +199,17 @@ export default {
                 ...obj
             },
             // 要在这里写 headers,从sessionStorage中拿,并给headers设置token
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     info() {
         return myGet({
             url: urls.info,
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     goodsList(obj) {
@@ -154,17 +218,17 @@ export default {
             params: {
                 ...obj
             },
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     allList() {//所有商品分类
         return myGet({
             url: urls.allList,
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     orderList(obj) {
@@ -173,9 +237,9 @@ export default {
             params: {
                 ...obj
             },
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     orderInfo(order_id) {
@@ -184,9 +248,9 @@ export default {
             params: {
                 order_id
             },
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     infoChange(obj) {//修改用户
@@ -195,9 +259,9 @@ export default {
             params: {
                 ...obj
             },
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     orderChange(obj) {
@@ -206,9 +270,9 @@ export default {
             params: {
                 ...obj
             },
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     shipping() {
@@ -216,9 +280,9 @@ export default {
             url: urls.shipping,
             params: {
             },
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     goodsEdit(obj) {//添加编辑商品
@@ -227,9 +291,9 @@ export default {
             params: {
                 ...obj
             },
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     goodsInfo(goods_id) {//获取商品信息
@@ -238,9 +302,9 @@ export default {
             params: {
                 goods_id
             },
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     goodsChange(obj) {//商品 删除下架
@@ -249,9 +313,9 @@ export default {
             params: {
                 ...obj
             },
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     skuList(goods_id) {//获取商品规格列表
@@ -260,9 +324,9 @@ export default {
             params: {
                 goods_id
             },
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     skuChange(obj) {//修改规格属性 上下架&删除&修改库存
@@ -271,9 +335,9 @@ export default {
             params: {
                 ...obj
             },
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     skuEdit(obj) {//添加规格 添加&编辑
@@ -282,9 +346,9 @@ export default {
             params: {
                 ...obj
             },
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     // 聊天室
@@ -294,9 +358,9 @@ export default {
             params: {
                 client_id
             },
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     userList() {
@@ -304,9 +368,9 @@ export default {
             url: urls.userList,
             params: {
             },
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     userSay(obj) {
@@ -315,9 +379,9 @@ export default {
             params: {
                 ...obj
             },
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     userHistory(obj) {//获取消息历史记录
@@ -326,17 +390,17 @@ export default {
             params: {
                 ...obj
             },
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     ossststoken() {
         return myGet({//oss上传获取ststoken
             url: urls.ossststoken,
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     imageList(goods_id) {//获取商品相册列表
@@ -345,9 +409,9 @@ export default {
             params: {
                 goods_id
             },
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     },
     imageChange(obj) {//添加 删除图片
@@ -356,9 +420,9 @@ export default {
             params: {
                 ...obj
             },
-            headers: {
-                'token': sessionStorage.getItem("token")
-            },
+            // headers: {
+            //     'token': sessionStorage.getItem("token")
+            // },
         })
     }
 }

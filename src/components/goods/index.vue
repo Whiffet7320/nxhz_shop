@@ -31,11 +31,12 @@ export default {
           { title: "商品管理", url: "/goods/sell" },
           { title: "商品列表", url: "/goods/sell" },
         ];
-      } else if (this.$route.path == "/goods/Edit") {
+      } else if (this.$route.path == "/goods/sell/Edit") {
+        this.$store.commit('toEditFlag',true)
         this.list[0].meta = [
           { title: "商品管理", url: "/goods/sell" },
           { title: "商品列表", url: "/goods/sell" },
-          { title: "商品详情页", url: "/goods/Edit" },
+          { title: "商品详情页", url: "/goods/sell/Edit" },
         ];
       } else if (this.$route.path == "/goods/examine") {
         this.list[0].meta = [
@@ -53,15 +54,16 @@ export default {
       console.log(from.path); //从哪来
       console.log(to.path); //到哪去
       if (to.path == "/goods/sell") {
+        this.$store.commit('toEditFlag',false)
         this.list[0].meta = [
           { title: "商品管理", url: "/goods/sell" },
           { title: "商品列表", url: "/goods/sell" },
         ];
-      } else if (to.path == "/goods/Edit") {
+      } else if (to.path == "/goods/sell/Edit") {
         this.list[0].meta = [
           { title: "商品管理", url: "/goods/sell" },
           { title: "商品列表", url: "/goods/sell" },
-          { title: "商品详情页", url: "/goods/Edit" },
+          { title: "商品详情页", url: "/goods/sell/Edit" },
         ];
       } else if (to.path == "/goods/examine") {
         this.list[0].meta = [

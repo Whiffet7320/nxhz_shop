@@ -126,6 +126,19 @@
                           v-if="ele.type == 1"
                           @click="imgClick"
                         />
+                        <p v-else-if="ele.type == 11">
+                          <img
+                            :src="ele.content.goods_image"
+                            class="img_cyy"
+                            @click="imgClick"
+                          />
+                          <span class="spanRed"
+                            >¥{{ ele.content.shop_price }}</span
+                          >
+                          <span class="type11Span">{{
+                            ele.content.goods_name
+                          }}</span>
+                        </p>
                         <p v-else>{{ ele.content }}</p>
                       </viewer>
                     </span>
@@ -262,7 +275,7 @@ export default {
     "$store.state.isDotNum": function () {
       this.isDotList = this.$store.state.isDotNum;
       console.log(this.sayObj);
-      this.userHistory()
+      this.userHistory();
       setTimeout(() => {
         console.log(1111221111);
         this.getLeftUserList();
@@ -417,9 +430,14 @@ export default {
           this.historyMassage.forEach((ele) => {
             ele.myadd_time = this.formatDate(new Date(ele.add_time * 1000)); //聊天时间
             this.leftRight.push(ele.send_id);
-            var reg = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/;
-            if (reg.test(ele.content)) {
-              // ele.type = 1;
+            // var reg = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/;
+            // if (reg.test(ele.content)) {
+            //   // ele.type = 1;
+            // }
+            // console.log(ele.type)
+            if (ele.type == 11) {
+              ele.content = JSON.parse(ele.content);
+              console.log(ele.content);
             }
           });
           console.log(this.historyMassage, this.leftRight);
@@ -682,7 +700,7 @@ export default {
 }
 
 .chatPop1 span {
-  background-color: #fff;
+  background-color: #fafafa;
   padding: 5px 8px;
   display: inline-block;
   border-radius: 10px;
@@ -704,9 +722,23 @@ export default {
   top: 8px;
   left: -16px;
 }
-/* .chatPop1 span p{
-  overflow: hidden;
-} */
+.chatPop1 .spanRed {
+  color: #f40;
+  border: 0px;
+  margin: 0;
+}
+.chatPop1 .type11Span {
+  border: 0px;
+  margin: 0;
+}
+.chatPop1 .spanRed::after,.chatPop1 .type11Span::after {
+  content: "";
+  border: 0px solid #ffffff00;
+  border-right: 0px solid #fff;
+  position: absolute;
+  top: 8px;
+  left: -16px;
+}
 .chatPop2 :hover {
   background-color: #2683f5;
 }

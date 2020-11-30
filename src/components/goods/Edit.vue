@@ -683,6 +683,7 @@ export default {
       this.edit.cat3_id = this.cat3_id;
     },
     backTo() {
+      // this.$store.commit("toEditFlag", false);
       this.$store.commit("good_pageNum", this.good_pageNum);
       this.$router.go(-1);
     },
@@ -720,7 +721,10 @@ export default {
 .shop-form #editor img {
   max-width: 100%;
 }
-.shop-form #editor .w-e-toolbar,.shop-form #editor .w-e-text-container{
+.shop-form #editor .w-e-toolbar{
+  z-index: 1 !important;
+}
+.shop-form #editor .w-e-text-container{
   z-index: 0 !important;
 }
 .shop-form .displayN {

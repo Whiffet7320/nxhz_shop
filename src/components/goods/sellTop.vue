@@ -64,7 +64,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["selectValue"]),
+    ...mapState(["selectValue","sellSearch"]),
   },
   methods: {
     onSubmit() {
@@ -87,6 +87,7 @@ export default {
       this.$store.commit("goodsId", " ");
       this.$store.commit("good_pageNum", 1);
       this.$store.commit("nameSort", { nameF: "first", nameS: "second" });
+      this.$store.commit("toEditFlag", true);
       this.$router.push({ name: "Edit" });
     },
     handleChange(value) {
@@ -98,6 +99,7 @@ export default {
     // this.$api.goodsList().then((res) => {
     //   console.log(res.data.data);
     // });
+    this.search = this.sellSearch
     this.$api.allList().then((res) => {
       console.log(res.data.data);
       this.myOptions = res.data.data;

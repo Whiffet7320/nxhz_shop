@@ -55,6 +55,7 @@
       <el-table-column prop="address3" label="销售价"> </el-table-column>
       <el-table-column prop="address3" label="库存"> </el-table-column>
       <el-table-column prop="myVerify" label="审核状态"> </el-table-column>
+      <el-table-column prop="mySys_on_sale" label="上架状态"> </el-table-column>
       <el-table-column fixed="right" label="操作" width="200">
         <template slot-scope="scope">
           <el-button @click="Editagain(scope.row)" type="text" size="small"
@@ -127,6 +128,11 @@ export default {
             } else if (ele.verify_state == 2) {
               ele.myVerify = "审核通过";
             }
+            if (ele.sys_on_sale == 0) {
+              ele.mySys_on_sale = "下架";
+            } else if (ele.sys_on_sale == 1) {
+              ele.mySys_on_sale = "正常";
+            }
             // console.log(this.sku[index].index);
             // this.tableData2 = ele.sku;
           });
@@ -139,6 +145,7 @@ export default {
       this.$store.commit("edit", row);
       this.$store.commit("goodsId", row.goods_id);
       this.$store.commit("nameSort", { nameF: "first", nameS: "second" });
+      this.$store.commit("toEditFlag", true);
       this.$router.push({ name: "Edit" });
     },
     seeWhy(row) {
@@ -157,7 +164,7 @@ export default {
   },
   created() {
     this.myPageNum = this.examine_pageNum;
-    this.$store.commit('per_page',10)
+    this.$store.commit("per_page", 10);
     this.mySearch = this.$store.state.examine_search;
     this.getData();
   },

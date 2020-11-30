@@ -1,5 +1,5 @@
 <template>
-  <div class="testBottom">
+  <div class="listBottom">
     <el-table :data="tableData" style="width: 100%">
       <el-table-column prop="date" label="ID"> </el-table-column>
       <el-table-column prop="name" label="用户信息">
@@ -166,6 +166,7 @@ export default {
     handleClick(row) {
       console.log(row);
       this.$store.commit("changeDetails", row);
+      this.$store.commit("tolistDetailsFlag", true);
       this.$router.push({ name: "listDetails" });
     },
     deleteRow(index, rows) {
@@ -177,7 +178,7 @@ export default {
 </script>
 
 <style >
-.testBottom {
+.listBottom {
   padding: 0 60px 60px 60px;
 }
 </style>

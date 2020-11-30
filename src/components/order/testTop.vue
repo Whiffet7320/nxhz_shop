@@ -75,8 +75,8 @@ import { mapState } from "vuex";
 export default {
   data() {
     return {
-      startTime: null,
-      endTime: null,
+      mystartTime: null,
+      myendTime: null,
       ruleForm: {
         name: "",
         region: "",
@@ -88,15 +88,17 @@ export default {
         desc: "",
       },
       phoneInput: "",
-      value1: "",
-      value2: "",
     };
   },
   computed: {
-    ...mapState(["order_testContent_search"]),
+    ...mapState(["order_testContent_search", "startTime", "endTime"]),
   },
-  created(){
-    this.phoneInput = this.order_testContent_search
+  created() {
+    this.phoneInput = this.order_testContent_search;
+    if (this.startTime && this.endTime) {
+      this.ruleForm.date1 = new Date(this.startTime).getTime();
+      this.ruleForm.date2 = new Date(this.endTime).getTime();
+    }
   },
   methods: {
     formatDate(now) {
@@ -127,26 +129,28 @@ export default {
         "__",
         Date.parse(this.ruleForm.date2)
       );
-      this.startTime = this.formatDate(
+      this.mystartTime = this.formatDate(
         new Date(Date.parse(this.ruleForm.date1))
       );
-      this.endTime = this.formatDate(new Date(Date.parse(this.ruleForm.date2)));
+      this.myendTime = this.formatDate(
+        new Date(Date.parse(this.ruleForm.date2))
+      );
     },
     onSubmit() {
       console.log("submit!", this.ruleForm.region);
       this.$store.commit("order_testContent_search", this.phoneInput);
       this.$store.commit("orderSelect", this.ruleForm.region);
-      this.$store.commit("startTime", this.startTime);
-      this.$store.commit("endTime", this.endTime);
+      this.$store.commit("startTime", this.mystartTime);
+      this.$store.commit("endTime", this.myendTime);
       this.$store.commit("pageNum", 1);
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
       this.phoneInput = "";
-      this.value1 = "";
-      this.value2 = "";
-      this.endTime = "";
-      this.startTime = "";
+      this.ruleForm.date1 = "";
+      this.ruleForm.date2 = "";
+      this.mystartTime = "";
+      this.myendTime = "";
       this.$store.commit("pageNum", 1);
       this.onSubmit();
     },

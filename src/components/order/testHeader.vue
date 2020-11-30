@@ -20,46 +20,71 @@
 export default {
   data() {
     return {
-      list:null,
+      list: null,
     };
   },
+  methods: {
+    getMatched() {
+      this.list = this.$route.matched;
+      if (this.$route.path == "/order/testContent") {
+        this.$store.commit("todetailsFlag", false);
+        this.list[0].meta = [
+          { title: "订单管理", url: "/order/testContent" },
+          { title: "订单列表", url: "/order/testContent" },
+        ];
+      } else if (this.$route.path == "/order/commentList") {
+        this.$store.commit("tolistDetailsFlag", false);
+        this.list[0].meta = [
+          { title: "订单管理", url: "/order/commentList" },
+          { title: "评论列表", url: "/order/commentList" },
+        ];
+      } else if (this.$route.path == "/order/testContent/details") {
+        this.$store.commit('todetailsFlag',true)
+        this.list[0].meta = [
+          { title: "订单管理", url: "/order/testContent" },
+          { title: "订单列表", url: "/order/testContent" },
+          { title: "订单详情页", url: "/order/testContent/details" },
+        ];
+      } else if (this.$route.path == "/order/commentList/listDetails") {
+        this.$store.commit('tolistDetailsFlag',true)
+        this.list[0].meta = [
+          { title: "订单管理", url: "/order/commentList" },
+          { title: "评论列表", url: "/order/commentList" },
+          { title: "评论详情页", url: "/order/commentList/listDetails" },
+        ];
+      }
+    },
+  },
   created() {
-    console.log(this.$route.params);
-    // let match = this.$route.matched.filter(item=>item.meta)
-    // console.log(match)
-    this.list = this.$route.matched;
-    // this.list.forEach(ele=>{
-    //   // console.log(ele.meta)
-    //   ele.meta.forEach((item)=>{
-    //     console.log(item)
-    //   })
-    // })
+    this.getMatched();
   },
   watch: {
     $route(to, from) {
       console.log(from.path); //从哪来
       console.log(to.path); //到哪去
       if (to.path == "/order/testContent") {
+        this.$store.commit("todetailsFlag", false);
         this.list[0].meta = [
           { title: "订单管理", url: "/order/testContent" },
           { title: "订单列表", url: "/order/testContent" },
         ];
-      } else if (to.path == "/order/commentList" ) {
+      } else if (to.path == "/order/commentList") {
+        this.$store.commit("tolistDetailsFlag", false);
         this.list[0].meta = [
           { title: "订单管理", url: "/order/commentList" },
           { title: "评论列表", url: "/order/commentList" },
         ];
-      }else if(to.path == "/order/details"){
+      } else if (to.path == "/order/testContent/details") {
         this.list[0].meta = [
           { title: "订单管理", url: "/order/testContent" },
           { title: "订单列表", url: "/order/testContent" },
-          { title: "订单详情页", url: "/order/details" },
+          { title: "订单详情页", url: "/order/testContent/details" },
         ];
-      }else if(to.path == "/order/listDetails"){
+      } else if (to.path == "/order/commentList/listDetails") {
         this.list[0].meta = [
           { title: "订单管理", url: "/order/commentList" },
           { title: "评论列表", url: "/order/commentList" },
-          { title: "评论详情页", url: "/order/listDetails" },
+          { title: "评论详情页", url: "/order/commentList/listDetails" },
         ];
       }
     },

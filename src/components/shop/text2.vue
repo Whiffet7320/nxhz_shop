@@ -228,9 +228,9 @@ export default {
         this.data = res.data.data;
         this.$store.commit("changeUser", res.data.data);
       })
-      .catch((data) => {
-        console.log(data);
-      })
+      // .catch((data) => {
+      //   console.log(data);
+      // })
       .then(() => {
         this.loading = false;
       });
@@ -279,7 +279,7 @@ export default {
 };
 </script>
 <style>
-.el-dialog {
+.shop-form .el-dialog {
   min-width: 666px;
 }
 .shop-form .el-tabs__content {
@@ -342,7 +342,7 @@ export default {
   width: 140px;
   height: 140px;
 }
-.el-dialog .el-form.demo-ruleForm {
+.shop-form  .el-dialog .el-form.demo-ruleForm {
   /* display: flex; */
 }
 .shop-form .el-input {

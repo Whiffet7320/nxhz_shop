@@ -1,11 +1,15 @@
 <template>
   <div class="order-content">
-    <Content-top />
-    <Content-botton />
-    <Page />
+    <div v-if="!todetailsFlag">
+      <Content-top />
+      <Content-botton />
+      <Page />
+    </div>
+    <router-view v-else />
   </div>
 </template>
 <script>
+import { mapState } from "vuex";
 import ContentTop from "./testTop";
 import ContentBotton from "./testBottom";
 import Page from "./page";
@@ -14,6 +18,9 @@ export default {
     ContentTop,
     ContentBotton,
     Page,
+  },
+  computed: {
+    ...mapState(["todetailsFlag"]),
   },
 };
 </script>

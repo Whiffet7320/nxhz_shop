@@ -1,24 +1,32 @@
 <template>
   <div class="sell-content">
-    <Content-top />
-    <Content-botton />
-    <Page />
+    <div v-if="!toEditFlag">
+      <Content-top />
+      <Content-botton />
+      <Page />
+    </div>
+
+    <router-view v-else/>
   </div>
 </template>
 <script>
-import ContentTop from './sellTop'
-import ContentBotton from './sellBottom'
-import Page from './sellpage'
+import { mapState } from "vuex";
+import ContentTop from "./sellTop";
+import ContentBotton from "./sellBottom";
+import Page from "./sellpage";
 export default {
-  components:{
+  components: {
     ContentTop,
     ContentBotton,
-    Page
-  }
-}
+    Page,
+  },
+    computed: {
+    ...mapState(["toEditFlag"]),
+  },
+};
 </script>
 <style>
-.sell-content{
+.sell-content {
   position: relative;
   height: 100%;
 }

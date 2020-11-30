@@ -39,8 +39,20 @@ export default new Vuex.Store({
     mobile:null,//账号名
     passWord:null,//账号密码
     sayObj:null,//say过来后的数据
+    toEditFlag:false,//渲染sell还是edit
+    todetailsFlag:false,
+    tolistDetailsFlag:false
   },
   mutations: {
+    toEditFlag(state, boolean) {
+      state.toEditFlag = boolean;
+    },
+    todetailsFlag(state, boolean) {
+      state.todetailsFlag = boolean;
+    },
+    tolistDetailsFlag(state, boolean) {
+      state.tolistDetailsFlag = boolean;
+    },
     sayObj(state, obj) {
       state.sayObj = obj;
     },
